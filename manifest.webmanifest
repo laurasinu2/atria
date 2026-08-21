@@ -1,7 +1,7 @@
 {
   "name": "Atria",
   "short_name": "Atria",
-  "description": "Registro privado de alimentación, síntomas, ciclo y medicación.",
+  "description": "Registro privado de alimentación, síntomas, ciclo, medicación y patrones personales.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

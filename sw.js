@@ -1,4 +1,4 @@
-const CACHE = 'atria-v1.0.0';
+const CACHE = 'atria-v1.2.0';
 const ASSETS = [
   './', './index.html', './styles.css', './app.js', './manifest.webmanifest',
   './icons/icon-192.png', './icons/icon-512.png', './icons/apple-touch-icon.png'

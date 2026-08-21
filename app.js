@@ -29,25 +29,242 @@ const DEFAULT_META = {
   lastBackupAt: null,
 };
 
-const DEFAULT_CATALOG = [
-  // Alimentos
-  ['food','Pasta','Carbohidratos'],['food','Arroz','Carbohidratos'],['food','Patata','Carbohidratos'],['food','Pan','Carbohidratos'],['food','Avena','Carbohidratos'],['food','Cuscús','Carbohidratos'],
-  ['food','Huevo','Proteínas'],['food','Pollo','Proteínas'],['food','Pavo','Proteínas'],['food','Ternera','Proteínas'],['food','Cerdo','Proteínas'],['food','Atún','Proteínas'],['food','Salmón','Proteínas'],['food','Pescado blanco','Proteínas'],
-  ['food','Tomate','Verduras'],['food','Cebolla','Verduras'],['food','Pimiento','Verduras'],['food','Calabacín','Verduras'],['food','Berenjena','Verduras'],['food','Zanahoria','Verduras'],['food','Lechuga','Verduras'],['food','Espinacas','Verduras'],['food','Brócoli','Verduras'],
-  ['food','Plátano','Fruta'],['food','Manzana','Fruta'],['food','Naranja','Fruta'],['food','Fresas','Fruta'],['food','Kiwi','Fruta'],['food','Uvas','Fruta'],
-  ['food','Leche','Lácteos'],['food','Queso','Lácteos'],['food','Yogur','Lácteos'],['food','Nata','Lácteos'],
-  ['food','Lentejas','Legumbres'],['food','Garbanzos','Legumbres'],['food','Judías','Legumbres'],['food','Guisantes','Legumbres'],
-  ['food','Almendras','Frutos secos'],['food','Nueces','Frutos secos'],['food','Cacahuetes','Frutos secos'],['food','Aguacate','Frutos secos'],
-  ['food','Salsa de tomate','Salsas'],['food','Mayonesa','Salsas'],['food','Pesto','Salsas'],['food','Salsa de soja','Salsas'],['food','Kétchup','Salsas'],['food','Mostaza','Salsas'],
-  // Síntomas
-  ['symptom','Dolor abdominal','Digestivo'],['symptom','Hinchazón','Digestivo'],['symptom','Gases','Digestivo'],['symptom','Diarrea','Digestivo'],['symptom','Estreñimiento','Digestivo'],['symptom','Náuseas','Digestivo'],['symptom','Acidez / reflujo','Digestivo'],
-  ['symptom','Dolor de cabeza','Dolor'],['symptom','Migraña','Dolor'],['symptom','Dolor muscular','Dolor'],['symptom','Dolor lumbar','Dolor'],
-  ['symptom','Cansancio','General'],['symptom','Mareo','General'],['symptom','Insomnio','General'],
-  ['symptom','Picor','Piel'],['symptom','Erupción','Piel'],
-  ['symptom','Congestión','Respiratorio'],['symptom','Tos','Respiratorio'],
-  ['symptom','Dolor menstrual','Menstrual'],['symptom','Sensibilidad mamaria','Menstrual'],
-  ['symptom','Irritabilidad','Ánimo'],['symptom','Ánimo bajo','Ánimo'],['symptom','Ansiedad','Ánimo'],
+const FOOD_CATEGORIES = ['Carbohidratos','Cereales','Proteínas','Embutidos','Verduras','Fruta','Lácteos','Legumbres','Frutos secos','Semillas','Salsas','Preparados','Otros'];
+
+const FOOD_TAG_DEFS = [
+  {key:'gluten',label:'Gluten'},
+  {key:'trigo',label:'Trigo'},
+  {key:'cebada',label:'Cebada'},
+  {key:'centeno',label:'Centeno'},
+  {key:'espelta',label:'Espelta'},
+  {key:'gluten_posible',label:'Puede contener gluten'},
+  {key:'trigo_posible',label:'Puede contener trigo'},
+  {key:'lactosa',label:'Lactosa'},
+  {key:'lactosa_posible',label:'Puede contener lactosa'},
+  {key:'leche',label:'Proteína de leche'},
+  {key:'huevo',label:'Huevo'},
+  {key:'soja',label:'Soja'},
+  {key:'sesamo',label:'Sésamo'},
+  {key:'cacahuete',label:'Cacahuete'},
+  {key:'frutos_secos',label:'Frutos secos'},
+  {key:'pescado',label:'Pescado'},
+  {key:'crustaceos',label:'Crustáceos'},
+  {key:'mamifero',label:'Mamífero / alfa-gal'},
+  {key:'fodmap_fructanos',label:'FODMAP: fructanos'},
+  {key:'fodmap_gos',label:'FODMAP: GOS'},
+  {key:'fodmap_fructosa',label:'FODMAP: fructosa'},
+  {key:'fodmap_polioles',label:'FODMAP: polioles'},
+  {key:'sacarosa',label:'Sacarosa'},
+  {key:'fpies_comun',label:'Desencadenante FPIES descrito'},
+  {key:'procesado_variable',label:'Composición variable'}
 ];
+const FOOD_TAG_LABELS = Object.fromEntries(FOOD_TAG_DEFS.map(x=>[x.key,x.label]));
+
+const DEFAULT_FOODS = [
+  {name:'Pasta',category:'Carbohidratos',tags:['gluten','trigo','fodmap_fructanos']},
+  {name:'Arroz',category:'Carbohidratos',tags:['fpies_comun']},
+  {name:'Patata',category:'Carbohidratos',tags:[]},
+  {name:'Pan',category:'Carbohidratos',tags:['gluten','trigo','fodmap_fructanos']},
+  {name:'Cuscús',category:'Carbohidratos',tags:['gluten','trigo','fodmap_fructanos']},
+  {name:'Maíz',category:'Carbohidratos',tags:[]},
+  {name:'Harina de trigo',category:'Cereales',tags:['gluten','trigo','fodmap_fructanos']},
+  {name:'Sémola de trigo',category:'Cereales',tags:['gluten','trigo','fodmap_fructanos']},
+  {name:'Trigo',category:'Cereales',tags:['gluten','trigo','fodmap_fructanos']},
+  {name:'Cebada',category:'Cereales',tags:['gluten','cebada']},
+  {name:'Centeno',category:'Cereales',tags:['gluten','centeno','fodmap_fructanos']},
+  {name:'Espelta',category:'Cereales',tags:['gluten','trigo','espelta','fodmap_fructanos']},
+  {name:'Avena',category:'Cereales',tags:['fpies_comun','gluten_posible','procesado_variable']},
+  {name:'Galletas',category:'Preparados',tags:['gluten','trigo','procesado_variable']},
+  {name:'Bollería',category:'Preparados',tags:['gluten','trigo','procesado_variable']},
+  {name:'Pizza',category:'Preparados',tags:['gluten','trigo','fodmap_fructanos','leche','lactosa_posible','procesado_variable']},
+
+  {name:'Huevo',category:'Proteínas',tags:['huevo','fpies_comun']},
+  {name:'Pollo',category:'Proteínas',tags:[]},
+  {name:'Pavo',category:'Proteínas',tags:[]},
+  {name:'Ternera',category:'Proteínas',tags:['mamifero']},
+  {name:'Cerdo',category:'Proteínas',tags:['mamifero']},
+  {name:'Cordero',category:'Proteínas',tags:['mamifero']},
+  {name:'Carne picada',category:'Proteínas',tags:['mamifero','procesado_variable']},
+  {name:'Atún',category:'Proteínas',tags:['pescado','fpies_comun']},
+  {name:'Salmón',category:'Proteínas',tags:['pescado','fpies_comun']},
+  {name:'Pescado blanco',category:'Proteínas',tags:['pescado','fpies_comun']},
+  {name:'Gambas',category:'Proteínas',tags:['crustaceos','fpies_comun']},
+  {name:'Langostinos',category:'Proteínas',tags:['crustaceos','fpies_comun']},
+  {name:'Tofu',category:'Proteínas',tags:['soja','fpies_comun']},
+
+  {name:'Frankfurt',category:'Embutidos',tags:['mamifero','gluten_posible','trigo_posible','lactosa_posible','procesado_variable']},
+  {name:'Cervela',category:'Embutidos',tags:['mamifero','gluten_posible','trigo_posible','lactosa_posible','procesado_variable']},
+  {name:'Jamón ibérico',category:'Embutidos',tags:['mamifero']},
+  {name:'Jamón dulce',category:'Embutidos',tags:['mamifero','lactosa_posible','procesado_variable']},
+  {name:'Chorizo',category:'Embutidos',tags:['mamifero','lactosa_posible','procesado_variable']},
+
+  {name:'Tomate',category:'Verduras',tags:[]},
+  {name:'Cebolla',category:'Verduras',tags:['fodmap_fructanos']},
+  {name:'Ajo',category:'Verduras',tags:['fodmap_fructanos']},
+  {name:'Pimiento',category:'Verduras',tags:[]},
+  {name:'Calabacín',category:'Verduras',tags:[]},
+  {name:'Berenjena',category:'Verduras',tags:[]},
+  {name:'Zanahoria',category:'Verduras',tags:[]},
+  {name:'Lechuga',category:'Verduras',tags:[]},
+  {name:'Espinacas',category:'Verduras',tags:[]},
+  {name:'Brócoli',category:'Verduras',tags:[]},
+  {name:'Coliflor',category:'Verduras',tags:['fodmap_polioles']},
+  {name:'Champiñones',category:'Verduras',tags:['fodmap_polioles']},
+  {name:'Espárragos',category:'Verduras',tags:['fodmap_fructanos']},
+  {name:'Alcachofa',category:'Verduras',tags:['fodmap_fructanos']},
+
+  {name:'Plátano',category:'Fruta',tags:[]},
+  {name:'Manzana',category:'Fruta',tags:['fodmap_fructosa','fodmap_polioles']},
+  {name:'Pera',category:'Fruta',tags:['fodmap_fructosa','fodmap_polioles']},
+  {name:'Naranja',category:'Fruta',tags:[]},
+  {name:'Fresas',category:'Fruta',tags:[]},
+  {name:'Kiwi',category:'Fruta',tags:[]},
+  {name:'Uvas',category:'Fruta',tags:[]},
+  {name:'Mango',category:'Fruta',tags:['fodmap_fructosa']},
+  {name:'Sandía',category:'Fruta',tags:['fodmap_fructosa','fodmap_polioles']},
+  {name:'Melocotón',category:'Fruta',tags:['fodmap_polioles']},
+  {name:'Ciruelas',category:'Fruta',tags:['fodmap_polioles']},
+
+  {name:'Leche',category:'Lácteos',tags:['lactosa','leche','mamifero','fpies_comun']},
+  {name:'Queso',category:'Lácteos',tags:['leche','mamifero','lactosa_posible']},
+  {name:'Yogur',category:'Lácteos',tags:['lactosa','leche','mamifero']},
+  {name:'Nata',category:'Lácteos',tags:['lactosa','leche','mamifero']},
+  {name:'Helado',category:'Lácteos',tags:['lactosa','leche','mamifero','procesado_variable']},
+
+  {name:'Lentejas',category:'Legumbres',tags:['fodmap_gos']},
+  {name:'Garbanzos',category:'Legumbres',tags:['fodmap_gos']},
+  {name:'Judías',category:'Legumbres',tags:['fodmap_gos']},
+  {name:'Guisantes',category:'Legumbres',tags:['fodmap_gos']},
+  {name:'Soja',category:'Legumbres',tags:['soja','fodmap_gos','fpies_comun']},
+
+  {name:'Almendras',category:'Frutos secos',tags:['frutos_secos']},
+  {name:'Nueces',category:'Frutos secos',tags:['frutos_secos']},
+  {name:'Avellanas',category:'Frutos secos',tags:['frutos_secos']},
+  {name:'Pistachos',category:'Frutos secos',tags:['frutos_secos']},
+  {name:'Cacahuetes',category:'Frutos secos',tags:['cacahuete']},
+  {name:'Aguacate',category:'Fruta',tags:[]},
+  {name:'Sésamo',category:'Semillas',tags:['sesamo']},
+
+  {name:'Salsa de tomate',category:'Salsas',tags:[]},
+  {name:'Mayonesa',category:'Salsas',tags:['huevo','procesado_variable']},
+  {name:'Pesto',category:'Salsas',tags:['leche','lactosa_posible','procesado_variable']},
+  {name:'Salsa de soja',category:'Salsas',tags:['soja','gluten_posible','trigo_posible','procesado_variable']},
+  {name:'Kétchup',category:'Salsas',tags:['procesado_variable']},
+  {name:'Mostaza',category:'Salsas',tags:['procesado_variable']},
+  {name:'Salsa de queso',category:'Salsas',tags:['lactosa','leche','mamifero','procesado_variable']},
+  {name:'Tahini',category:'Salsas',tags:['sesamo']},
+  {name:'Mermeladas',category:'Preparados',tags:['sacarosa','procesado_variable']},
+  {name:'Miel',category:'Otros',tags:['fodmap_fructosa']}
+];
+
+const DEFAULT_SYMPTOMS = [
+  ['Dolor abdominal','Digestivo'],['Hinchazón','Digestivo'],['Gases','Digestivo'],['Diarrea','Digestivo'],['Estreñimiento','Digestivo'],['Náuseas','Digestivo'],['Vómitos','Digestivo'],['Acidez / reflujo','Digestivo'],
+  ['Dolor de cabeza','Dolor'],['Migraña','Dolor'],['Dolor muscular','Dolor'],['Dolor articular','Dolor'],['Dolor lumbar','Dolor'],
+  ['Cansancio','General'],['Mareo','General'],['Insomnio','General'],['Palidez','General'],['Letargo','General'],['Niebla mental','General'],['Desmayo / pérdida de conocimiento','General'],
+  ['Picor','Piel'],['Erupción','Piel'],['Urticaria','Piel'],['Sarpullido / enrojecimiento','Piel'],['Hormigueo / picor en la boca','Piel'],['Hinchazón de labios / lengua','Piel'],
+  ['Congestión','Respiratorio'],['Tos','Respiratorio'],['Sibilancias','Respiratorio'],['Dificultad para respirar','Respiratorio'],
+  ['Dolor menstrual','Menstrual'],['Sensibilidad mamaria','Menstrual'],
+  ['Irritabilidad','Ánimo'],['Ánimo bajo','Ánimo'],['Ansiedad','Ánimo']
+];
+
+const CLINICAL_PATTERNS = [
+  {
+    id:'lactose', name:'Intolerancia a la lactosa', triggerTags:['lactosa'], possibleTriggerTags:['lactosa_posible'], minHours:0, maxHours:6, minExposures:4,
+    symptoms:[['Hinchazón',2],['Diarrea',2],['Gases',2],['Náuseas',1],['Dolor abdominal',2],['Vómitos',1]],
+    summary:'Compara alimentos con lactosa con síntomas digestivos que aparecen durante las horas siguientes.',
+    evidence:'NIDDK describe síntomas dentro de pocas horas tras consumir lactosa.',
+    sources:[['NIDDK · Intolerancia a la lactosa','https://www.niddk.nih.gov/health-information/informacion-de-la-salud/enfermedades-digestivas/intolerancia-lactosa/sintomas-causas']]
+  },
+  {
+    id:'celiac', name:'Patrón compatible con enfermedad celíaca', triggerTags:['gluten'], possibleTriggerTags:['gluten_posible'], minHours:0, maxHours:48, minExposures:4, exploratoryWindow:true,
+    symptoms:[['Hinchazón',2],['Diarrea',2],['Estreñimiento',1],['Gases',1],['Náuseas',1],['Vómitos',1],['Dolor abdominal',2],['Cansancio',1],['Dolor de cabeza',1],['Erupción',1]],
+    summary:'Busca repetición de síntomas alrededor de exposiciones a gluten. La celiaquía no tiene una latencia poscomida suficientemente específica para diagnosticarla.',
+    evidence:'El gluten de trigo, cebada y centeno desencadena la enfermedad celíaca, pero el diagnóstico requiere pruebas médicas y no se basa solo en síntomas.',
+    warning:'No elimines el gluten antes de realizar pruebas de celiaquía sin indicación médica, porque puede alterar los resultados.',
+    sources:[['NIDDK · Síntomas de celiaquía','https://www.niddk.nih.gov/health-information/informacion-de-la-salud/enfermedades-digestivas/enfermedad-celiaca/sintomas-causas'],['NIDDK · Diagnóstico de celiaquía','https://www.niddk.nih.gov/health-information/informacion-de-la-salud/enfermedades-digestivas/enfermedad-celiaca/diagnostico'],['NIDDK · Alimentos con gluten','https://www.niddk.nih.gov/health-information/informacion-de-la-salud/enfermedades-digestivas/enfermedad-celiaca/alimentos-dietas-nutricion']]
+  },
+  {
+    id:'ncws', name:'Sensibilidad al trigo/gluten no celíaca', triggerTags:['trigo','gluten'], possibleTriggerTags:['trigo_posible','gluten_posible'], minHours:0, maxHours:72, minExposures:4,
+    symptoms:[['Dolor abdominal',2],['Hinchazón',2],['Diarrea',2],['Estreñimiento',1],['Gases',1],['Dolor de cabeza',1],['Cansancio',1],['Niebla mental',1],['Dolor muscular',1],['Erupción',1]],
+    summary:'Compara trigo/gluten con síntomas intestinales y extraintestinales durante horas o días posteriores.',
+    evidence:'Revisiones describen síntomas que pueden aparecer en horas o días; no existe un biomarcador diagnóstico validado y deben excluirse celiaquía y alergia al trigo.',
+    sources:[['PubMed · Revisión NCWS 2025','https://pubmed.ncbi.nlm.nih.gov/41303655/'],['PubMed · Revisión NCGS','https://pubmed.ncbi.nlm.nih.gov/26355401/']]
+  },
+  {
+    id:'wheat_allergy', name:'Alergia alimentaria al trigo', triggerTags:['trigo'], possibleTriggerTags:['trigo_posible'], minHours:0, maxHours:4, minExposures:4, allergy:true,
+    symptoms:[['Urticaria',2],['Sarpullido / enrojecimiento',1],['Hormigueo / picor en la boca',1],['Hinchazón de labios / lengua',2],['Vómitos',1],['Diarrea',1],['Dolor abdominal',1],['Tos',1],['Sibilancias',2],['Mareo',1],['Dificultad para respirar',2],['Desmayo / pérdida de conocimiento',2]],
+    summary:'Busca síntomas alérgicos desde minutos hasta unas horas después de alimentos con trigo.',
+    evidence:'La FDA incluye el trigo entre los principales alérgenos y describe reacciones desde minutos hasta pocas horas.',
+    sources:[['FDA · Alergias alimentarias','https://www.fda.gov/food/buy-store-serve-safe-food/alergias-alimentarias-lo-que-necesita-saber']]
+  },
+  {
+    id:'milk_allergy', name:'Alergia alimentaria a la leche', triggerTags:['leche'], possibleTriggerTags:[], minHours:0, maxHours:4, minExposures:4, allergy:true,
+    symptoms:[['Urticaria',2],['Sarpullido / enrojecimiento',1],['Hormigueo / picor en la boca',1],['Hinchazón de labios / lengua',2],['Vómitos',1],['Diarrea',1],['Dolor abdominal',1],['Tos',1],['Sibilancias',2],['Mareo',1],['Dificultad para respirar',2],['Desmayo / pérdida de conocimiento',2]],
+    summary:'Busca síntomas alérgicos tras alimentos con proteína de leche; no es lo mismo que intolerancia a la lactosa.',
+    evidence:'La leche es uno de los principales alérgenos alimentarios reconocidos por la FDA.',
+    sources:[['FDA · Alergias alimentarias','https://www.fda.gov/food/buy-store-serve-safe-food/alergias-alimentarias-lo-que-necesita-saber']]
+  },
+  {
+    id:'egg_allergy', name:'Alergia alimentaria al huevo', triggerTags:['huevo'], possibleTriggerTags:[], minHours:0, maxHours:4, minExposures:4, allergy:true,
+    symptoms:[['Urticaria',2],['Sarpullido / enrojecimiento',1],['Hormigueo / picor en la boca',1],['Hinchazón de labios / lengua',2],['Vómitos',1],['Diarrea',1],['Dolor abdominal',1],['Tos',1],['Sibilancias',2],['Mareo',1],['Dificultad para respirar',2]],
+    summary:'Busca síntomas alérgicos tras alimentos etiquetados con huevo.',
+    evidence:'El huevo es uno de los principales alérgenos alimentarios reconocidos por la FDA.',
+    sources:[['FDA · Alergias alimentarias','https://www.fda.gov/food/buy-store-serve-safe-food/alergias-alimentarias-lo-que-necesita-saber']]
+  },
+  {
+    id:'nut_allergy', name:'Alergia a cacahuete / frutos secos', triggerTags:['cacahuete','frutos_secos'], possibleTriggerTags:[], minHours:0, maxHours:4, minExposures:4, allergy:true,
+    symptoms:[['Urticaria',2],['Sarpullido / enrojecimiento',1],['Hormigueo / picor en la boca',1],['Hinchazón de labios / lengua',2],['Vómitos',1],['Diarrea',1],['Dolor abdominal',1],['Tos',1],['Sibilancias',2],['Mareo',1],['Dificultad para respirar',2],['Desmayo / pérdida de conocimiento',2]],
+    summary:'Busca síntomas alérgicos tras cacahuete o frutos secos.',
+    evidence:'Cacahuete y frutos secos figuran entre los principales alérgenos alimentarios de la FDA.',
+    sources:[['FDA · Alergias alimentarias','https://www.fda.gov/food/buy-store-serve-safe-food/alergias-alimentarias-lo-que-necesita-saber']]
+  },
+  {
+    id:'fish_shellfish_allergy', name:'Alergia a pescado / crustáceos', triggerTags:['pescado','crustaceos'], possibleTriggerTags:[], minHours:0, maxHours:4, minExposures:4, allergy:true,
+    symptoms:[['Urticaria',2],['Sarpullido / enrojecimiento',1],['Hormigueo / picor en la boca',1],['Hinchazón de labios / lengua',2],['Vómitos',1],['Diarrea',1],['Dolor abdominal',1],['Tos',1],['Sibilancias',2],['Mareo',1],['Dificultad para respirar',2],['Desmayo / pérdida de conocimiento',2]],
+    summary:'Busca síntomas alérgicos tras pescado o crustáceos.',
+    evidence:'Pescado y crustáceos figuran entre los principales alérgenos alimentarios de la FDA.',
+    sources:[['FDA · Alergias alimentarias','https://www.fda.gov/food/buy-store-serve-safe-food/alergias-alimentarias-lo-que-necesita-saber']]
+  },
+  {
+    id:'soy_allergy', name:'Alergia alimentaria a la soja', triggerTags:['soja'], possibleTriggerTags:[], minHours:0, maxHours:4, minExposures:4, allergy:true,
+    symptoms:[['Urticaria',2],['Sarpullido / enrojecimiento',1],['Hormigueo / picor en la boca',1],['Hinchazón de labios / lengua',2],['Vómitos',1],['Diarrea',1],['Dolor abdominal',1],['Tos',1],['Sibilancias',2],['Mareo',1],['Dificultad para respirar',2]],
+    summary:'Busca síntomas alérgicos tras alimentos con soja.',
+    evidence:'La soja es uno de los principales alérgenos alimentarios reconocidos por la FDA.',
+    sources:[['FDA · Alergias alimentarias','https://www.fda.gov/food/buy-store-serve-safe-food/alergias-alimentarias-lo-que-necesita-saber']]
+  },
+  {
+    id:'sesame_allergy', name:'Alergia alimentaria al sésamo', triggerTags:['sesamo'], possibleTriggerTags:[], minHours:0, maxHours:4, minExposures:4, allergy:true,
+    symptoms:[['Urticaria',2],['Sarpullido / enrojecimiento',1],['Hormigueo / picor en la boca',1],['Hinchazón de labios / lengua',2],['Vómitos',1],['Diarrea',1],['Dolor abdominal',1],['Tos',1],['Sibilancias',2],['Mareo',1],['Dificultad para respirar',2]],
+    summary:'Busca síntomas alérgicos tras alimentos con sésamo.',
+    evidence:'El sésamo es uno de los nueve principales alérgenos alimentarios reconocidos por la FDA.',
+    sources:[['FDA · Alergias alimentarias','https://www.fda.gov/food/buy-store-serve-safe-food/alergias-alimentarias-lo-que-necesita-saber']]
+  },
+  {
+    id:'alpha_gal', name:'Síndrome alfa-gal', triggerTags:['mamifero'], possibleTriggerTags:[], minHours:2, maxHours:6, minExposures:4, allergy:true,
+    symptoms:[['Urticaria',2],['Picor',1],['Náuseas',1],['Vómitos',1],['Acidez / reflujo',1],['Diarrea',1],['Dolor abdominal',2],['Tos',1],['Dificultad para respirar',2],['Hinchazón de labios / lengua',2],['Mareo',1],['Desmayo / pérdida de conocimiento',2]],
+    summary:'Busca síntomas entre 2 y 6 horas tras carne u otros productos de mamífero.',
+    evidence:'CDC describe reacciones habitualmente 2–6 horas después de carne o productos que contienen alfa-gal.',
+    sources:[['CDC · Alpha-gal Syndrome','https://stacks.cdc.gov/view/cdc/131347/cdc_131347_DS1.pdf']]
+  },
+  {
+    id:'fpies', name:'Patrón FPIES', triggerTags:['fpies_comun'], possibleTriggerTags:[], minHours:1, maxHours:4, minExposures:4,
+    symptoms:[['Vómitos',2],['Letargo',2],['Palidez',2],['Diarrea',1],['Dolor abdominal',1],['Náuseas',1]],
+    summary:'Busca especialmente vómitos, letargo o palidez 1–4 horas después de alimentos descritos como desencadenantes de FPIES.',
+    evidence:'FPIES es poco frecuente; la literatura describe vómitos retrasados, letargo y palidez habitualmente entre 1 y 4 horas. En adultos el patrón puede ser distinto.',
+    sources:[['PubMed · NIAID workshop FPIES 2025','https://pubmed.ncbi.nlm.nih.gov/39521282/'],['PubMed · Adult FPIES','https://pubmed.ncbi.nlm.nih.gov/35769585/']]
+  },
+  {
+    id:'fodmap_ibs', name:'Patrón SII / sensibilidad a FODMAP', triggerTags:['fodmap_fructanos','fodmap_gos','fodmap_fructosa','fodmap_polioles','lactosa'], possibleTriggerTags:['lactosa_posible'], minHours:0, maxHours:24, minExposures:4, exploratoryWindow:true,
+    symptoms:[['Dolor abdominal',2],['Hinchazón',2],['Gases',2],['Diarrea',2],['Estreñimiento',2]],
+    summary:'Busca si alimentos ricos en distintos FODMAP coinciden repetidamente con síntomas intestinales. No diagnostica síndrome de intestino irritable.',
+    evidence:'NIDDK describe FODMAP como carbohidratos difíciles de digerir y enumera trigo/centeno, ajo, cebolla, legumbres, ciertos lácteos y frutas entre los alimentos relevantes.',
+    sources:[['NIDDK · Alimentación y SII','https://www.niddk.nih.gov/health-information/informacion-de-la-salud/enfermedades-digestivas/sindrome-intestino-irritable/alimentos-dietas-nutricion']]
+  }
+];
+
+const MEAL_DEFAULT_TIMES = {
+  'desayuno':'08:00', 'media mañana':'11:00', 'comida':'14:00', 'merienda':'17:30', 'cena':'21:00', 'snack':'22:30'
+};
 
 function uid(prefix='id') { return `${prefix}_${Date.now().toString(36)}_${Math.random().toString(36).slice(2,8)}`; }
 function pad(n){ return String(n).padStart(2,'0'); }
@@ -87,18 +304,41 @@ function put(store,value){ return new Promise((resolve,reject)=>{ const r=tx(sto
 function del(store,key){ return new Promise((resolve,reject)=>{ const r=tx(store,'readwrite').delete(key); r.onsuccess=()=>resolve(); r.onerror=()=>reject(r.error); }); }
 function clearStore(store){ return new Promise((resolve,reject)=>{ const r=tx(store,'readwrite').clear(); r.onsuccess=()=>resolve(); r.onerror=()=>reject(r.error); }); }
 
+async function ensureCatalogDefaults(){
+  const byKey=(type,name)=>state.catalog.find(i=>i.type===type && i.name.toLowerCase()===name.toLowerCase());
+  for(const def of DEFAULT_FOODS){
+    let item=byKey('food',def.name);
+    if(!item){
+      item={id:uid('food'),type:'food',name:def.name,category:def.category,tags:[...def.tags],custom:false,active:true,favorite:false};
+      await put(STORES.catalog,item); state.catalog.push(item);
+    }else{
+      let changed=false;
+      if(!Array.isArray(item.tags)){ item.tags=[...def.tags]; changed=true; }
+      if(!item.category){ item.category=def.category; changed=true; }
+      if(item.active===undefined){ item.active=true; changed=true; }
+      if(item.favorite===undefined){ item.favorite=false; changed=true; }
+      if(changed) await put(STORES.catalog,item);
+    }
+  }
+  for(const [name,category] of DEFAULT_SYMPTOMS){
+    let item=byKey('symptom',name);
+    if(!item){
+      item={id:uid('symptom'),type:'symptom',name,category,custom:false,active:true,favorite:false};
+      await put(STORES.catalog,item); state.catalog.push(item);
+    }
+  }
+  for(const item of state.catalog.filter(i=>i.type==='food')){
+    if(!Array.isArray(item.tags)){ item.tags=[]; await put(STORES.catalog,item); }
+  }
+}
+
 async function loadData(){
   state.entries = await getAll(STORES.entries);
   state.catalog = await getAll(STORES.catalog);
   const metaRows = await getAll(STORES.meta);
   state.meta = {...DEFAULT_META};
   metaRows.forEach(r=>state.meta[r.key]=r.value);
-  if(!state.catalog.length){
-    for(const [type,name,category] of DEFAULT_CATALOG){
-      const item={id:uid(type),type,name,category,custom:false,active:true,favorite:false};
-      await put(STORES.catalog,item); state.catalog.push(item);
-    }
-  }
+  await ensureCatalogDefaults();
   for(const [key,value] of Object.entries(DEFAULT_META)){
     if(!metaRows.some(r=>r.key===key)) await setMeta(key,value,false);
   }
@@ -111,7 +351,7 @@ function applySettings(){
   const chosen=state.meta.theme||'dark';
   const resolved=chosen==='system' ? (matchMedia('(prefers-color-scheme: light)').matches?'light':'dark') : chosen;
   document.documentElement.dataset.theme=resolved;
-  document.querySelector('meta[name="theme-color"]').setAttribute('content',resolved==='light'?'#f4f6fa':'#111318');
+  document.querySelector('meta[name="theme-color"]').setAttribute('content',resolved==='light'?'#f5f7fb':'#18202d');
   if(document.getElementById('theme-select')) document.getElementById('theme-select').value=chosen;
   if(document.getElementById('hour-format')) document.getElementById('hour-format').value=state.meta.hourFormat||'24';
   if(document.getElementById('correlation-window')) document.getElementById('correlation-window').value=String(state.meta.correlationWindow||72);
@@ -162,7 +402,7 @@ function renderCalendar(){
 }
 
 function entryTitle(e){
-  if(e.type==='meal') return cap(e.mealType||'Comida');
+  if(e.type==='meal') return e.name?.trim() || cap(e.mealType||'Comida');
   if(e.type==='symptom') return catalogById(e.symptomId)?.name || e.symptomName || 'Síntoma';
   if(e.type==='period') return 'Menstruación';
   if(e.type==='med') return catalogById(e.medId)?.name || e.medName || 'Medicamento';
@@ -171,7 +411,7 @@ function entryTitle(e){
 function entrySubtitle(e){
   if(e.type==='meal'){
     const foods=(e.foods||[]).map(id=>catalogById(id)?.name).filter(Boolean).join(' · ');
-    return [foods,e.amount?`Cantidad ${e.amount}`:'',e.note||''].filter(Boolean).join(' · ');
+    return [e.name?.trim()?cap(e.mealType||'comida'):'',foods,e.amount?`Cantidad ${e.amount}`:'',e.note||''].filter(Boolean).join(' · ');
   }
   if(e.type==='symptom') return [`Intensidad ${e.intensity}/10`,e.duration?`Duración ${e.duration}`:'',e.ongoing?'Continúa desde ayer':'',e.note||''].filter(Boolean).join(' · ');
   if(e.type==='period') return [`Flujo ${e.flow}`,`Dolor ${e.pain}/10`,e.note||''].filter(Boolean).join(' · ');
@@ -201,6 +441,7 @@ function showAddPicker(date=state.selectedDate||todayStr()){
 }
 
 function guessMealType(){ const h=new Date().getHours(); if(h<10)return'desayuno'; if(h<12)return'media mañana'; if(h<16)return'comida'; if(h<19)return'merienda'; if(h<23)return'cena'; return'snack'; }
+function mealTimeForType(type){ return MEAL_DEFAULT_TIMES[type] || '14:00'; }
 function groupedCatalog(type){
   const groups={}; activeCatalog(type).forEach(i=>{(groups[i.category||'Otros'] ||= []).push(i)}); return groups;
 }
@@ -209,9 +450,26 @@ function recentFoodIds(){
   for(const m of meals) for(const id of (m.foods||[])) if(!seen.includes(id) && catalogById(id)?.active!==false) seen.push(id);
   return seen.slice(0,8);
 }
+function foodTagSelectorHTML(selectedTags=[],scope='food-tags'){
+  const selected=new Set(selectedTags||[]);
+  return `<div class="tag-selector" data-tag-scope="${scope}">${FOOD_TAG_DEFS.map(t=>`<button type="button" class="tag-chip ${selected.has(t.key)?'active':''}" data-food-tag-toggle="${t.key}">${esc(t.label)}</button>`).join('')}</div>`;
+}
+function selectedFoodTags(container=document){ return [...container.querySelectorAll('[data-food-tag-toggle].active')].map(x=>x.dataset.foodTagToggle); }
 function ensureMealDraft(date,entry=null){
-  if(entry){ state.mealDraft={id:entry.id,date:entry.date,time:entry.time,mealType:entry.mealType,amount:entry.amount||'normal',foods:[...(entry.foods||[])],note:entry.note||''}; }
-  else state.mealDraft={id:null,date,time:date===todayStr()?nowTime():'12:00',mealType:guessMealType(),amount:'normal',foods:[],note:''};
+  if(entry){ state.mealDraft={id:entry.id,date:entry.date,name:entry.name||'',time:entry.time,mealType:entry.mealType,amount:entry.amount||'normal',foods:[...(entry.foods||[])],note:entry.note||''}; }
+  else if(date===todayStr()){
+    const type=guessMealType(); state.mealDraft={id:null,date,name:'',time:nowTime(),mealType:type,amount:'normal',foods:[],note:''};
+  }else{
+    state.mealDraft={id:null,date,name:'',time:mealTimeForType('comida'),mealType:'comida',amount:'normal',foods:[],note:''};
+  }
+}
+function syncMealDraftFromForm(){
+  if(!state.mealDraft)return;
+  const name=document.getElementById('meal-name'), type=document.getElementById('meal-type'), time=document.getElementById('meal-time'), note=document.getElementById('meal-note');
+  if(name)state.mealDraft.name=name.value;
+  if(type)state.mealDraft.mealType=type.value;
+  if(time)state.mealDraft.time=time.value;
+  if(note)state.mealDraft.note=note.value;
 }
 function renderMealForm(date,entry=null){
   if(!state.mealDraft || entry) ensureMealDraft(date,entry);
@@ -220,11 +478,17 @@ function renderMealForm(date,entry=null){
   const chips=(items)=>items.map(i=>`<button type="button" class="chip ${d.foods.includes(i.id)?'active':''}" data-food-chip="${i.id}">${esc(i.name)}</button>`).join('');
   const cats=Object.keys(groups).sort((a,b)=>a==='Salsas'?1:b==='Salsas'?-1:a.localeCompare(b,'es')).map(cat=>`<div class="category-block"><div class="category-title">${esc(cat)}</div><div class="segmented">${chips(groups[cat])}</div></div>`).join('');
   openSheet(`${sheetHead(d.id?'Editar comida':'Añadir comida',formatDate(d.date))}<form id="meal-form" class="form-grid">
+    <label class="field-label">Nombre de la comida <span class="muted small">opcional, por ejemplo “Pasta boloñesa”</span><input id="meal-name" class="field-input" value="${esc(d.name||'')}" placeholder="Nombre del plato o comida"></label>
     <div class="two-col"><label class="field-label">Tipo<select id="meal-type" class="field-input">${['desayuno','media mañana','comida','merienda','cena','snack'].map(x=>`<option ${d.mealType===x?'selected':''}>${x}</option>`).join('')}</select></label><label class="field-label">Hora<input id="meal-time" class="field-input" type="time" value="${d.time}"></label></div>
     ${favorites.length?`<div><div class="category-title">Comidas favoritas</div><div class="segmented">${favorites.map(f=>`<button type="button" class="chip favorite" data-fav-meal="${f.id}">${esc(f.name)}</button>`).join('')}</div></div>`:''}
     ${recents.length?`<div><div class="category-title">Recientes</div><div class="segmented">${chips(recents)}</div></div>`:''}
-    <div class="toolbar-row"><input id="food-search" class="field-input" placeholder="Buscar alimento…"><button type="button" class="secondary-btn" id="toggle-new-food">+ Nuevo</button></div>
-    <div id="new-food-panel" class="card compact-card hidden"><div class="two-col"><label class="field-label">Nombre<input id="new-food-name" class="field-input"></label><label class="field-label">Categoría<select id="new-food-category" class="field-input">${['Carbohidratos','Proteínas','Verduras','Fruta','Lácteos','Legumbres','Frutos secos','Salsas'].map(x=>`<option>${x}</option>`).join('')}</select></label></div><button type="button" id="save-new-food" class="primary-btn" style="margin-top:10px">Guardar alimento</button></div>
+    <div class="toolbar-row"><input id="food-search" class="field-input" placeholder="Buscar ingrediente…"><button type="button" class="secondary-btn" id="toggle-new-food">+ Nuevo</button></div>
+    <div id="new-food-panel" class="card compact-card hidden">
+      <div class="two-col"><label class="field-label">Nombre<input id="new-food-name" class="field-input"></label><label class="field-label">Categoría<select id="new-food-category" class="field-input">${FOOD_CATEGORIES.map(x=>`<option>${x}</option>`).join('')}</select></label></div>
+      <div class="field-label" style="margin-top:10px">Etiquetas del alimento <span class="muted small">Se eligen una sola vez. Atria las usa automáticamente en los patrones.</span>${foodTagSelectorHTML([],'new-food')}</div>
+      <p class="muted small">En productos procesados la composición cambia según marca/receta. Puedes marcar “puede contener…” y editarlo después.</p>
+      <button type="button" id="save-new-food" class="primary-btn">Guardar alimento</button>
+    </div>
     <div id="food-categories">${cats}</div>
     <label class="field-label">Cantidad<div class="segmented">${['poca','normal','mucha'].map(x=>`<button type="button" class="chip ${d.amount===x?'active':''}" data-amount="${x}">${cap(x)}</button>`).join('')}</div></label>
     <label class="field-label">Notas opcionales<textarea id="meal-note" class="field-textarea" placeholder="Algo excepcional de esta comida…">${esc(d.note)}</textarea></label>
@@ -272,18 +536,107 @@ function renderMedForm(date,entry=null){
   </form>`);
 }
 
-async function addCatalogItem(type,name,category='Otros'){
+async function addCatalogItem(type,name,category='Otros',tags=[]){
   name=name.trim(); if(!name)return null;
-  const existing=state.catalog.find(i=>i.type===type&&i.name.toLowerCase()===name.toLowerCase()); if(existing){ if(existing.active===false){existing.active=true;await put(STORES.catalog,existing);} return existing; }
-  const item={id:uid(type),type,name,category,custom:true,active:true,favorite:false}; await put(STORES.catalog,item); state.catalog.push(item); return item;
+  const existing=state.catalog.find(i=>i.type===type&&i.name.toLowerCase()===name.toLowerCase());
+  if(existing){
+    let changed=false;
+    if(existing.active===false){existing.active=true;changed=true;}
+    if(type==='food' && Array.isArray(tags) && tags.length){existing.tags=[...new Set(tags)];changed=true;}
+    if(changed) await put(STORES.catalog,existing);
+    return existing;
+  }
+  const item={id:uid(type),type,name,category,custom:true,active:true,favorite:false,...(type==='food'?{tags:[...new Set(tags)]}:{})}; await put(STORES.catalog,item); state.catalog.push(item); return item;
 }
 
 function filterByAnalysisPeriod(){ const val=document.getElementById('analysis-period')?.value||'30'; if(val==='all') return [...state.entries]; const cutoff=new Date(); cutoff.setHours(0,0,0,0); cutoff.setDate(cutoff.getDate()-Number(val)+1); return state.entries.filter(e=>entryDateTime(e)>=cutoff); }
 function countMap(arr){ const m=new Map(); arr.forEach(x=>m.set(x,(m.get(x)||0)+1)); return [...m.entries()].sort((a,b)=>b[1]-a[1]); }
+function symptomNameById(id){ return catalogById(id)?.name || ''; }
+function mealTags(meal){ return [...new Set((meal.foods||[]).flatMap(id=>catalogById(id)?.tags||[]))]; }
+function triggerInfoForMeal(meal,pattern){
+  let weight=0; const triggerFoods=[]; const uncertainFoods=[];
+  for(const id of new Set(meal.foods||[])){
+    const food=catalogById(id); if(!food)continue; const tags=food.tags||[];
+    const exact=tags.some(t=>pattern.triggerTags.includes(t));
+    const possible=tags.some(t=>(pattern.possibleTriggerTags||[]).includes(t));
+    if(exact){weight=1;triggerFoods.push(food.name);}
+    else if(possible){weight=Math.max(weight,.55);uncertainFoods.push(food.name);}
+  }
+  return {weight,triggerFoods,uncertainFoods};
+}
+function patternSymptomMap(pattern){ return new Map(pattern.symptoms.map(([name,weight])=>[name,weight])); }
+function symptomsForMealWindow(meal,pattern,symptoms){
+  const start=entryDateTime(meal), smap=patternSymptomMap(pattern);
+  return symptoms.filter(s=>{
+    const name=symptomNameById(s.symptomId); if(!smap.has(name))return false;
+    const lag=hoursBetween(start,entryDateTime(s)); return lag>=pattern.minHours && lag<=pattern.maxHours;
+  }).map(s=>({...s,lag:hoursBetween(start,entryDateTime(s)),patternWeight:smap.get(symptomNameById(s.symptomId))||1}));
+}
+function computeClinicalPatterns(entries){
+  const meals=entries.filter(e=>e.type==='meal').sort((a,b)=>entryDateTime(a)-entryDateTime(b));
+  const symptoms=entries.filter(e=>e.type==='symptom').sort((a,b)=>entryDateTime(a)-entryDateTime(b));
+  const periodDates=new Set(entries.filter(e=>e.type==='period').map(e=>e.date));
+  return CLINICAL_PATTERNS.map(pattern=>{
+    const exposures=[]; const background=[];
+    for(const meal of meals){
+      const info=triggerInfoForMeal(meal,pattern);
+      if(info.weight>0) exposures.push({meal,...info}); else background.push(meal);
+    }
+    let weightedHit=0,totalWeight=0,hits=0,periodMatches=0; const matches=[];
+    for(const exp of exposures){
+      totalWeight+=exp.weight; const found=symptomsForMealWindow(exp.meal,pattern,symptoms);
+      if(found.length){
+        hits++; const strength=Math.min(1,Math.max(...found.map(x=>x.patternWeight))/2); weightedHit+=exp.weight*strength;
+        periodMatches+=found.filter(x=>periodDates.has(x.date)).length;
+        matches.push({meal:exp.meal,triggerFoods:exp.triggerFoods,uncertainFoods:exp.uncertainFoods,symptoms:found});
+      }
+    }
+    let bgHits=0;
+    for(const meal of background){ if(symptomsForMealWindow(meal,pattern,symptoms).length) bgHits++; }
+    const hitRate=totalWeight?weightedHit/totalWeight:0; const bgRate=background.length?bgHits/background.length:0;
+    const contrast=Math.max(0,hitRate-bgRate); const reliability=Math.min(1,totalWeight/10);
+    const score=Math.max(0,Math.min(100,Math.round((.72*hitRate+.28*contrast)*100*(.60+.40*reliability))));
+    const sufficient=exposures.length>=pattern.minExposures;
+    return {...pattern,exposures:exposures.length,totalExposureWeight:totalWeight,hits,hitRate,bgRate,score,sufficient,matches,periodMatches,uncertainExposures:exposures.filter(x=>x.weight<1).length};
+  }).sort((a,b)=>(b.sufficient-a.sufficient)||(b.score-a.score)||(b.exposures-a.exposures)||a.name.localeCompare(b.name,'es'));
+}
+function clinicalWindowText(p){
+  const base=p.minHours===0?`0–${p.maxHours} h`:`${p.minHours}–${p.maxHours} h`;
+  return p.exploratoryWindow?`${base} · ventana exploratoria, no diagnóstica`:base;
+}
+function patternLevel(score){ if(score>=70)return'Alta'; if(score>=40)return'Moderada'; return'Baja'; }
+function renderClinicalPatterns(entries){
+  const el=document.getElementById('clinical-patterns'); if(!el)return;
+  const patterns=computeClinicalPatterns(entries); state.lastClinicalPatterns=patterns;
+  el.innerHTML=patterns.map((p,i)=>{
+    const status=p.sufficient?`${p.score}/100 · ${patternLevel(p.score)}`:`${p.exposures}/${p.minExposures} exposiciones`;
+    const fill=p.sufficient?p.score:0;
+    return `<button class="pattern-item" data-pattern-index="${i}"><div class="pattern-heading"><div><strong>${esc(p.name)}</strong><div class="meta">${p.sufficient?`${p.hits} de ${p.exposures} exposiciones con síntomas`:'Datos insuficientes'} · ${esc(clinicalWindowText(p))}</div></div><span class="pattern-score ${p.sufficient?'':'insufficient'}">${esc(status)}</span></div><div class="compat-track"><span class="compat-fill" style="width:${fill}%"></span></div></button>`;
+  }).join('');
+}
+function showClinicalPatternDetail(p){
+  const triggerLabels=[...new Set([...p.triggerTags,...(p.possibleTriggerTags||[])])].map(k=>FOOD_TAG_LABELS[k]||k);
+  const symptomLabels=p.symptoms.map(([n,w])=>`${n}${w>=2?' ★':''}`);
+  const matchRows=p.matches.length?p.matches.flatMap(m=>m.symptoms.map(sym=>`<div class="clinical-match"><div><strong>${esc(m.meal.name?.trim()||cap(m.meal.mealType||'comida'))}</strong><div class="meta">${esc(formatDate(m.meal.date,{day:'numeric',month:'short'}))} ${formatTime(m.meal.time)} · ${esc([...m.triggerFoods,...m.uncertainFoods].join(', '))}</div></div><div class="clinical-match-right"><strong>+${sym.lag<1?Math.round(sym.lag*60)+' min':sym.lag.toFixed(sym.lag<10?1:0)+' h'}</strong><span>${esc(symptomNameById(sym.symptomId))} · ${sym.intensity}/10</span></div></div>`)).join(''):'<div class="empty-state">Todavía no hay coincidencias dentro de esta ventana.</div>';
+  const sources=p.sources.map(([label,url])=>`<a class="source-link" href="${esc(url)}" target="_blank" rel="noopener noreferrer">${esc(label)} ↗</a>`).join('');
+  const allergyNote=p.allergy?`<div class="clinical-warning"><strong>Importante</strong><span>Dificultad para respirar, hinchazón de lengua/garganta o pérdida de conocimiento pueden ser signos de una reacción alérgica grave y requieren atención urgente.</span></div>`:'';
+  const warning=p.warning?`<div class="clinical-warning"><strong>A tener en cuenta</strong><span>${esc(p.warning)}</span></div>`:'';
+  const dataText=p.sufficient?`<strong>${p.score}/100</strong><span>Índice de compatibilidad · ${p.hits} de ${p.exposures} exposiciones tuvieron síntomas relacionados.</span>`:`<strong>Datos insuficientes</strong><span>${p.exposures} de ${p.minExposures} exposiciones mínimas registradas.</span>`;
+  openSheet(`${sheetHead(p.name,'Compatibilidad orientativa; no es una probabilidad de enfermedad ni un diagnóstico.')}
+    <div class="clinical-score-card"><div>${dataText}</div>${p.sufficient?`<div class="compat-track large"><span class="compat-fill" style="width:${p.score}%"></span></div>`:''}</div>
+    ${warning}${allergyNote}
+    <div class="detail-section"><h3>Qué busca Atria</h3><p class="muted small">${esc(p.summary)}</p><div class="tag-list">${triggerLabels.map(x=>`<span class="mini-tag">${esc(x)}</span>`).join('')}</div></div>
+    <div class="detail-section"><h3>Síntomas relacionados</h3><p class="muted small">★ = síntoma con mayor peso en este patrón.</p><div class="tag-list">${symptomLabels.map(x=>`<span class="mini-tag symptom-tag">${esc(x)}</span>`).join('')}</div></div>
+    <div class="detail-section"><h3>Ventana propia</h3><p>${esc(clinicalWindowText(p))}</p><p class="muted small">${esc(p.evidence)}</p></div>
+    <div class="detail-section"><h3>Tus coincidencias</h3>${p.periodMatches?`<p class="muted small">${p.periodMatches} síntomas coincidentes ocurrieron durante días de regla; Atria lo muestra como contexto, sin asumir que sea la causa.</p>`:''}${p.uncertainExposures?`<p class="muted small">${p.uncertainExposures} exposiciones proceden de alimentos marcados como “puede contener”; pesan menos en el índice.</p>`:''}<div class="clinical-match-list">${matchRows}</div></div>
+    <div class="detail-section"><h3>Fuentes</h3><div class="source-list">${sources}</div></div>
+    <p class="footer-note">Este índice es una herramienta personal de seguimiento. No está validado para diagnosticar ni descartar enfermedades.</p>`);
+}
+
 function renderAnalysis(){
   const entries=filterByAnalysisPeriod(); const meals=entries.filter(e=>e.type==='meal'); const symptoms=entries.filter(e=>e.type==='symptom'); const periods=entries.filter(e=>e.type==='period');
   const allFoodIds=meals.flatMap(m=>[...new Set(m.foods||[])]); const foodCounts=countMap(allFoodIds); const symptomCounts=countMap(symptoms.map(s=>s.symptomId));
-  const regDays=new Set(entries.map(e=>e.date)).size; const symptomDays=new Set(symptoms.map(e=>e.date)).size; const periodDays=new Set(periods.map(e=>e.date)).size;
+  const symptomDays=new Set(symptoms.map(e=>e.date)).size; const periodDays=new Set(periods.map(e=>e.date)).size;
   const topFood=foodCounts[0] ? catalogById(foodCounts[0][0])?.name : '—';
   document.getElementById('analysis-summary').innerHTML=[
     [meals.length,'comidas registradas'],[symptomDays,'días con síntomas'],[periodDays,'días con regla'],[topFood,'alimento más repetido']
@@ -296,7 +649,9 @@ function renderAnalysis(){
   state.lastCorrelations=correlations;
   const periodDates=new Set(periods.map(p=>p.date)); const cycleSymptomCounts=countMap(symptoms.filter(s=>periodDates.has(s.date)).map(s=>s.symptomId));
   document.getElementById('cycle-analysis').innerHTML=periodDates.size?(cycleSymptomCounts.length?cycleSymptomCounts.slice(0,8).map(([id,n])=>`<div class="rank-item"><div><strong>${esc(catalogById(id)?.name||'Síntoma')}</strong><div class="meta">Apareció ${n} ${n===1?'vez':'veces'} durante días de regla</div></div><span class="badge">${periodDates.size} días de regla</span></div>`).join(''):'<div class="empty-state">Tienes días de regla registrados, pero todavía no coinciden con síntomas.</div>'):'<div class="empty-state">Registra días de menstruación para comparar el ciclo con tus síntomas.</div>';
+  renderClinicalPatterns(entries);
 }
+
 function computeCorrelations(entries,windowHours){
   const meals=entries.filter(e=>e.type==='meal').sort((a,b)=>entryDateTime(a)-entryDateTime(b)); const symptoms=entries.filter(e=>e.type==='symptom').sort((a,b)=>entryDateTime(a)-entryDateTime(b));
   const exposures=new Map();
@@ -327,13 +682,13 @@ function refreshAll(){ renderCalendar(); if(state.currentView==='analysis')rende
 
 function downloadBlob(blob,name){ const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000); }
 async function exportJSON(){
-  const payload={app:'Atria',version:1,exportedAt:new Date().toISOString(),entries:state.entries,catalog:state.catalog,meta:{...state.meta,lastBackupAt:new Date().toISOString()}};
+  const payload={app:'Atria',version:2,exportedAt:new Date().toISOString(),entries:state.entries,catalog:state.catalog,meta:{...state.meta,lastBackupAt:new Date().toISOString()}};
   const stamp=todayStr(); downloadBlob(new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}),`atria-backup-${stamp}.json`); await setMeta('lastBackupAt',new Date().toISOString()); renderSettingsState(); showToast('Copia JSON exportada.');
 }
 function exportCSV(){
-  const headers=['date','time','type','title','meal_type','foods','amount','intensity','duration','flow','pain','dose','note'];
+  const headers=['date','time','type','title','meal_name','meal_type','foods','amount','intensity','duration','flow','pain','dose','note'];
   const rows=state.entries.sort((a,b)=>entryDateTime(a)-entryDateTime(b)).map(e=>[
-    e.date,e.time||'',e.type,entryTitle(e),e.mealType||'',(e.foods||[]).map(id=>catalogById(id)?.name||id).join('|'),e.amount||'',e.intensity??'',e.duration||'',e.flow||'',e.pain??'',e.dose||'',e.note||''
+    e.date,e.time||'',e.type,entryTitle(e),e.name||'',e.mealType||'',(e.foods||[]).map(id=>catalogById(id)?.name||id).join('|'),e.amount||'',e.intensity??'',e.duration||'',e.flow||'',e.pain??'',e.dose||'',e.note||''
   ]);
   const csv=[headers,...rows].map(r=>r.map(v=>`"${String(v??'').replace(/"/g,'""')}"`).join(',')).join('\n');
   downloadBlob(new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'}),`atria-datos-${todayStr()}.csv`); showToast('CSV exportado.');
@@ -351,18 +706,37 @@ async function importJSONFile(file){
   }catch(err){ alert('No se pudo importar la copia. Comprueba que sea un backup JSON de Atria.'); console.error(err); }
 }
 
+function foodTagsText(item){
+  const labels=(item.tags||[]).map(k=>FOOD_TAG_LABELS[k]||k); if(!labels.length)return'Sin etiquetas clínicas';
+  return labels.slice(0,4).join(' · ')+(labels.length>4?` · +${labels.length-4}`:'');
+}
 function manageCatalog(type){
   const labels={food:'Alimentos',symptom:'Síntomas',med:'Medicamentos'}; const items=activeCatalog(type).sort((a,b)=>(a.category||'').localeCompare(b.category||'','es')||a.name.localeCompare(b.name,'es'));
-  openSheet(`${sheetHead(labels[type],type==='food'?'Eliminar de la lista no borra el historial antiguo.':'Puedes editar tus listas sin cambiar registros pasados.')}<div class="manager-list">${items.map(i=>`<div class="manager-item"><div><strong>${esc(i.name)}</strong><div class="sub">${esc(i.category||'')}</div></div><div>${type==='symptom'?`<button class="star-btn ${i.favorite?'active':''}" data-star-item="${i.id}" aria-label="Favorito">★</button>`:''}<button class="mini-btn" data-rename-item="${i.id}">Editar</button>${i.custom?`<button class="mini-btn" data-deactivate-item="${i.id}">Quitar</button>`:''}</div></div>`).join('')}</div><button class="primary-btn full" style="margin-top:12px" data-manager-add="${type}">+ Añadir</button>`);
+  openSheet(`${sheetHead(labels[type],type==='food'?'Cada alimento guarda sus etiquetas una sola vez; Atria las usa automáticamente al analizar patrones. Quitar de la lista no borra el historial.':'Puedes editar tus listas sin cambiar registros pasados.')}<div class="manager-list">${items.map(i=>`<div class="manager-item"><div><strong>${esc(i.name)}</strong><div class="sub">${esc(i.category||'')}</div>${type==='food'?`<div class="food-tag-note">${esc(foodTagsText(i))}</div>`:''}</div><div>${type==='symptom'?`<button class="star-btn ${i.favorite?'active':''}" data-star-item="${i.id}" aria-label="Favorito">★</button>`:''}<button class="mini-btn" data-rename-item="${i.id}">Editar</button>${i.custom?`<button class="mini-btn" data-deactivate-item="${i.id}">Quitar</button>`:''}</div></div>`).join('')}</div><button class="primary-btn full" style="margin-top:12px" data-manager-add="${type}">+ Añadir</button>`);
+}
+function renderFoodEditor(item=null){
+  const tags=item?.tags||[]; const category=item?.category||'Otros';
+  openSheet(`${sheetHead(item?'Editar alimento':'Añadir alimento','Las etiquetas se guardan con el alimento; no tendrás que indicarlas cada vez que comas.')}<form id="food-editor-form" class="form-grid" data-item-id="${item?.id||''}">
+    <label class="field-label">Nombre<input id="food-editor-name" class="field-input" value="${esc(item?.name||'')}" placeholder="Ej. Pan de espelta"></label>
+    <label class="field-label">Categoría<select id="food-editor-category" class="field-input">${FOOD_CATEGORIES.map(x=>`<option ${category===x?'selected':''}>${x}</option>`).join('')}</select></label>
+    <label class="field-label">Etiquetas${foodTagSelectorHTML(tags,'food-editor')}</label>
+    <p class="muted small">Para productos preparados o de marca, revisa su etiqueta real. Si no estás segura, usa “Puede contener…” en vez de marcar el ingrediente como seguro.</p>
+    <button class="primary-btn" type="submit">Guardar alimento</button>
+  </form>`);
 }
 async function renameItem(id){
-  const item=catalogById(id); if(!item)return; const name=prompt('Nombre:',item.name); if(!name?.trim())return; item.name=name.trim();
+  const item=catalogById(id); if(!item)return; if(item.type==='food')return renderFoodEditor(item);
+  const name=prompt('Nombre:',item.name); if(!name?.trim())return; item.name=name.trim();
   if(item.type!=='med'){ const category=prompt('Categoría:',item.category||'Otros'); if(category?.trim()) item.category=category.trim(); }
   await put(STORES.catalog,item); manageCatalog(item.type); refreshAll();
 }
 async function deactivateItem(id){ const item=catalogById(id); if(!item)return; if(!confirm(`Quitar “${item.name}” de futuras selecciones? El historial antiguo se conservará.`))return; item.active=false; await put(STORES.catalog,item); manageCatalog(item.type); refreshAll(); }
 async function toggleFavorite(id){ const item=catalogById(id); if(!item)return; item.favorite=!item.favorite; await put(STORES.catalog,item); manageCatalog(item.type); }
-async function managerAdd(type){ const name=prompt(type==='food'?'Nombre del alimento:':type==='symptom'?'Nombre del síntoma:':'Nombre del medicamento:'); if(!name?.trim())return; let cat='Otros'; if(type==='food')cat=prompt('Categoría (ej. Verduras, Proteínas, Salsas):','Otros')||'Otros'; if(type==='symptom')cat=prompt('Categoría (ej. Digestivo, Dolor, General):','General')||'General'; await addCatalogItem(type,name,cat); manageCatalog(type); }
+async function managerAdd(type){
+  if(type==='food')return renderFoodEditor();
+  const name=prompt(type==='symptom'?'Nombre del síntoma:':'Nombre del medicamento:'); if(!name?.trim())return; let cat='Otros';
+  if(type==='symptom')cat=prompt('Categoría (ej. Digestivo, Dolor, General):','General')||'General'; await addCatalogItem(type,name,cat); manageCatalog(type);
+}
 
 async function resetApp(){
   if(!confirm('Esto borrará todos los registros, listas personalizadas y ajustes de Atria. ¿Continuar?'))return;
@@ -397,11 +771,12 @@ function bindEvents(){
     const menu=e.target.closest('[data-entry-menu]'); if(menu)return showEntryMenu(menu.dataset.entryMenu);
     const edit=e.target.closest('[data-edit-entry]'); if(edit){ const ent=state.entries.find(x=>x.id===edit.dataset.editEntry); if(!ent)return; if(ent.type==='meal')renderMealForm(ent.date,ent); if(ent.type==='symptom')renderSymptomForm(ent.date,ent); if(ent.type==='period')renderPeriodForm(ent.date,ent); if(ent.type==='med')renderMedForm(ent.date,ent); return; }
     const dele=e.target.closest('[data-delete-entry]'); if(dele){ const ent=state.entries.find(x=>x.id===dele.dataset.deleteEntry); if(ent&&confirm(`¿Borrar “${entryTitle(ent)}”?`)){ await deleteEntry(ent.id); closeSheet(); showToast('Entrada borrada.'); } return; }
+    const tag=e.target.closest('[data-food-tag-toggle]'); if(tag){tag.classList.toggle('active');return;}
     const food=e.target.closest('[data-food-chip]'); if(food){ const id=food.dataset.foodChip; const arr=state.mealDraft.foods; state.mealDraft.foods=arr.includes(id)?arr.filter(x=>x!==id):[...arr,id]; food.classList.toggle('active'); return; }
     const amt=e.target.closest('[data-amount]'); if(amt){state.mealDraft.amount=amt.dataset.amount;document.querySelectorAll('[data-amount]').forEach(x=>x.classList.toggle('active',x===amt));return;}
-    const fav=e.target.closest('[data-fav-meal]'); if(fav){const f=(state.meta.favoriteMeals||[]).find(x=>x.id===fav.dataset.favMeal);if(f){state.mealDraft.foods=[...f.foods];state.mealDraft.mealType=f.mealType||state.mealDraft.mealType;state.mealDraft.amount=f.amount||'normal';renderMealForm(state.mealDraft.date);}return;}
+    const fav=e.target.closest('[data-fav-meal]'); if(fav){const f=(state.meta.favoriteMeals||[]).find(x=>x.id===fav.dataset.favMeal);if(f){syncMealDraftFromForm();state.mealDraft.foods=[...f.foods];state.mealDraft.mealType=f.mealType||state.mealDraft.mealType;state.mealDraft.time=mealTimeForType(state.mealDraft.mealType);state.mealDraft.amount=f.amount||'normal';state.mealDraft.name=f.mealName||state.mealDraft.name||'';renderMealForm(state.mealDraft.date);}return;}
     if(e.target.id==='toggle-new-food'){document.getElementById('new-food-panel').classList.toggle('hidden');return;}
-    if(e.target.id==='save-new-food'){const item=await addCatalogItem('food',document.getElementById('new-food-name').value,document.getElementById('new-food-category').value);if(item){state.mealDraft.foods.push(item.id);renderMealForm(state.mealDraft.date);showToast('Alimento añadido.');}return;}
+    if(e.target.id==='save-new-food'){syncMealDraftFromForm();const panel=document.getElementById('new-food-panel');const tags=selectedFoodTags(panel);const item=await addCatalogItem('food',document.getElementById('new-food-name').value,document.getElementById('new-food-category').value,tags);if(item){if(!state.mealDraft.foods.includes(item.id))state.mealDraft.foods.push(item.id);renderMealForm(state.mealDraft.date);showToast('Alimento añadido.');}return;}
     const symChip=e.target.closest('[data-symptom-chip]'); if(symChip){document.getElementById('symptom-select').value=symChip.dataset.symptomChip;document.querySelectorAll('[data-symptom-chip]').forEach(x=>x.classList.toggle('active',x===symChip));return;}
     const intens=e.target.closest('[data-intensity]'); if(intens){document.getElementById('symptom-intensity').value=intens.dataset.intensity;document.querySelectorAll('[data-intensity]').forEach(x=>x.classList.toggle('active',x===intens));return;}
     if(e.target.id==='toggle-new-symptom'){document.getElementById('new-symptom-panel').classList.toggle('hidden');return;}
@@ -410,7 +785,7 @@ function bindEvents(){
     const pp=e.target.closest('[data-period-pain]'); if(pp){document.getElementById('period-pain').value=pp.dataset.periodPain;document.querySelectorAll('[data-period-pain]').forEach(x=>x.classList.toggle('active',x===pp));return;}
     if(e.target.id==='toggle-new-med'){document.getElementById('new-med-panel').classList.toggle('hidden');return;}
     if(e.target.id==='save-new-med'){const item=await addCatalogItem('med',document.getElementById('new-med-name').value,'Medicamentos');if(item){renderMedForm(document.getElementById('med-form').dataset.date);showToast('Medicamento añadido.');}return;}
-    if(e.target.id==='save-meal-favorite'){ if(!state.mealDraft.foods.length){showToast('Selecciona alimentos primero.');return;} const name=prompt('Nombre de esta comida favorita:','Comida habitual'); if(name?.trim()){const favs=[...(state.meta.favoriteMeals||[])];favs.push({id:uid('fav'),name:name.trim(),foods:[...state.mealDraft.foods],mealType:document.getElementById('meal-type').value,amount:state.mealDraft.amount});await setMeta('favoriteMeals',favs,false);showToast('Comida favorita guardada.');}return; }
+    if(e.target.id==='save-meal-favorite'){ syncMealDraftFromForm(); if(!state.mealDraft.foods.length){showToast('Selecciona alimentos primero.');return;} const name=prompt('Nombre de esta comida favorita:',state.mealDraft.name||'Comida habitual'); if(name?.trim()){const favs=[...(state.meta.favoriteMeals||[])];favs.push({id:uid('fav'),name:name.trim(),mealName:state.mealDraft.name||'',foods:[...state.mealDraft.foods],mealType:state.mealDraft.mealType,amount:state.mealDraft.amount});await setMeta('favoriteMeals',favs,false);showToast('Comida favorita guardada.');}return; }
     const star=e.target.closest('[data-star-item]'); if(star)return toggleFavorite(star.dataset.starItem);
     const rename=e.target.closest('[data-rename-item]'); if(rename)return renameItem(rename.dataset.renameItem);
     const deact=e.target.closest('[data-deactivate-item]'); if(deact)return deactivateItem(deact.dataset.deactivateItem);
@@ -421,14 +796,28 @@ function bindEvents(){
     if(e.target.id==='food-search'){
       const q=e.target.value.trim().toLowerCase(); document.querySelectorAll('#food-categories .chip').forEach(ch=>{ch.style.display=ch.textContent.toLowerCase().includes(q)?'inline-flex':'none';});
     }
+    if(['meal-name','meal-time','meal-note'].includes(e.target.id)) syncMealDraftFromForm();
+  });
+  document.getElementById('sheet').addEventListener('change',e=>{
+    if(e.target.id==='meal-type' && state.mealDraft){
+      state.mealDraft.mealType=e.target.value; state.mealDraft.time=mealTimeForType(e.target.value);
+      const time=document.getElementById('meal-time'); if(time)time.value=state.mealDraft.time;
+    }
   });
 
   document.getElementById('sheet').addEventListener('submit',async e=>{
     e.preventDefault();
     if(e.target.id==='meal-form'){
       if(!state.mealDraft.foods.length){showToast('Selecciona al menos un alimento.');return;}
-      const entry={id:state.mealDraft.id||uid('entry'),type:'meal',date:state.mealDraft.date,time:document.getElementById('meal-time').value,mealType:document.getElementById('meal-type').value,foods:[...state.mealDraft.foods],amount:state.mealDraft.amount,note:document.getElementById('meal-note').value.trim()};
+      const entry={id:state.mealDraft.id||uid('entry'),type:'meal',date:state.mealDraft.date,name:document.getElementById('meal-name').value.trim(),time:document.getElementById('meal-time').value,mealType:document.getElementById('meal-type').value,foods:[...state.mealDraft.foods],amount:state.mealDraft.amount,note:document.getElementById('meal-note').value.trim()};
       await saveEntry(entry); state.mealDraft=null; closeSheet(); showToast('Comida guardada.'); return;
+    }
+    if(e.target.id==='food-editor-form'){
+      const name=document.getElementById('food-editor-name').value.trim(); if(!name){showToast('Escribe un nombre.');return;}
+      const category=document.getElementById('food-editor-category').value; const tags=selectedFoodTags(e.target); const id=e.target.dataset.itemId;
+      if(id){ const item=catalogById(id); if(item){item.name=name;item.category=category;item.tags=[...new Set(tags)];await put(STORES.catalog,item);} }
+      else await addCatalogItem('food',name,category,tags);
+      refreshAll(); manageCatalog('food'); showToast('Alimento guardado.'); return;
     }
     if(e.target.id==='symptom-form'){
       const id=document.getElementById('symptom-select').value; if(!id){showToast('Selecciona un síntoma.');return;}
@@ -448,6 +837,7 @@ function bindEvents(){
   });
 
   document.getElementById('correlations-list').addEventListener('click',e=>{const b=e.target.closest('[data-correlation-index]');if(b){const c=state.lastCorrelations?.[Number(b.dataset.correlationIndex)];if(c)showCorrelationDetail(c);}});
+  document.getElementById('clinical-patterns').addEventListener('click',e=>{const b=e.target.closest('[data-pattern-index]');if(b){const p=state.lastClinicalPatterns?.[Number(b.dataset.patternIndex)];if(p)showClinicalPatternDetail(p);}});
 }
 
 async function init(){
