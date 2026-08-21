@@ -4,7 +4,7 @@ Atria es una PWA local para registrar comidas, síntomas, menstruación y medica
 
 ## PIN
 
-PIN inicial: **2917**
+PIN inicial: **xxxx**
 
 El dispositivo queda recordado tras introducirlo correctamente. En Ajustes > Privacidad puedes usar **Bloquear ahora** para pedirlo otra vez.
 
