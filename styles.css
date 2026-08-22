@@ -174,7 +174,7 @@ main { width: min(100%, 860px); margin: 0 auto; padding: calc(18px + env(safe-ar
   .weekday-row,.calendar-grid{gap:3px}.day-cell{min-height:65px;padding:6px 4px}.day-number{width:26px;height:26px}.entry-type-grid{grid-template-columns:1fr 1fr}.two-col{grid-template-columns:1fr}.scale-row{grid-template-columns:repeat(5,1fr)}
 }
 
-/* Atria v1.2 — food tags and clinical-pattern analysis */
+/* Atria v1.3 — food tags, clinical patterns and Bristol stool tracking */
 .tag-selector, .tag-list { display:flex; flex-wrap:wrap; gap:7px; }
 .tag-chip { border:1px solid var(--line); background:color-mix(in srgb,var(--panel-2) 94%,transparent); color:var(--muted); border-radius:999px; padding:7px 10px; font-size:12px; line-height:1.15; }
 .tag-chip.active { color:var(--text); border-color:color-mix(in srgb,var(--accent) 60%,var(--line)); background:color-mix(in srgb,var(--accent) 17%,var(--panel-2)); }
@@ -215,3 +215,7 @@ main { width: min(100%, 860px); margin: 0 auto; padding: calc(18px + env(safe-ar
   .clinical-match { display:grid; }
   .clinical-match-right { text-align:left; }
 }
+
+.bristol-quick { display:grid; grid-template-columns:repeat(7,1fr); gap:6px; }
+.bristol-quick .chip { padding:8px 4px; justify-content:center; min-width:0; }
+@media (max-width:420px){ .bristol-quick { grid-template-columns:repeat(4,1fr); } }

@@ -4,13 +4,13 @@ Atria es una PWA local para registrar comidas, síntomas, menstruación y medica
 
 ## PIN
 
-PIN inicial: **xxxx**
+PIN inicial: **2917**
 
 El dispositivo queda recordado tras introducirlo correctamente. En Ajustes > Privacidad puedes usar **Bloquear ahora** para pedirlo otra vez.
 
 > El PIN es una barrera de privacidad de la interfaz, no cifrado fuerte. La seguridad principal sigue siendo el código/Face ID del iPhone.
 
-## Qué incluye esta V1.2
+## Qué incluye esta V1.4
 
 - Calendario mensual, empezando en lunes.
 - Registro de comida, síntoma, menstruación y medicación.
@@ -70,3 +70,10 @@ GitHub Pages aloja únicamente los archivos estáticos de la aplicación. Atria 
 ## Sobre los patrones clínicos
 
 El valor 0–100 es un **índice de compatibilidad interno**, no una probabilidad de tener una enfermedad. Atria exige al menos 4 exposiciones antes de mostrar una puntuación, tiene en cuenta exposiciones sin síntomas y reduce el peso de alimentos marcados como “puede contener”. Algunos patrones sin una latencia clínica bien establecida usan una ventana exploratoria y lo indican expresamente.
+
+## Cambios v1.4
+- Catálogo base de alimentos mucho más amplio: mantequilla, curry, aceites, panes, cereales, carnes, pescados, verduras, frutas, lácteos, salsas, condimentos, preparados y snacks cotidianos.
+- Nuevas categorías **Grasas y aceites**, **Condimentos** y **Dulces y snacks**.
+- Los alimentos nuevos incluidos de fábrica conservan las etiquetas clínicas automáticas cuando la composición es suficientemente clara; los preparados variables se marcan como tales o con “puede contener”.
+- Catálogo de síntomas ampliado con malestar digestivo, deposiciones, dolor, energía, sueño, piel, respiratorio, ojos, boca/garganta, ciclo y ánimo.
+- Se mantienen la escala Bristol 1–7 y sus equivalencias internas para el análisis clínico.

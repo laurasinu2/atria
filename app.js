@@ -29,7 +29,7 @@ const DEFAULT_META = {
   lastBackupAt: null,
 };
 
-const FOOD_CATEGORIES = ['Carbohidratos','Cereales','Proteínas','Embutidos','Verduras','Fruta','Lácteos','Legumbres','Frutos secos','Semillas','Salsas','Preparados','Otros'];
+const FOOD_CATEGORIES = ['Carbohidratos','Cereales','Proteínas','Embutidos','Verduras','Fruta','Lácteos','Legumbres','Frutos secos','Semillas','Grasas y aceites','Salsas','Condimentos','Dulces y snacks','Preparados','Otros'];
 
 const FOOD_TAG_DEFS = [
   {key:'gluten',label:'Gluten'},
@@ -154,17 +154,154 @@ const DEFAULT_FOODS = [
   {name:'Salsa de queso',category:'Salsas',tags:['lactosa','leche','mamifero','procesado_variable']},
   {name:'Tahini',category:'Salsas',tags:['sesamo']},
   {name:'Mermeladas',category:'Preparados',tags:['sacarosa','procesado_variable']},
+
+  {name:'Arroz integral',category:'Carbohidratos',tags:[]},
+  {name:'Quinoa',category:'Cereales',tags:[]},
+  {name:'Fideos de trigo',category:'Carbohidratos',tags:['gluten','trigo','fodmap_fructanos']},
+  {name:'Pan de molde',category:'Carbohidratos',tags:['gluten','trigo','fodmap_fructanos','procesado_variable']},
+  {name:'Pan integral',category:'Carbohidratos',tags:['gluten','trigo','fodmap_fructanos']},
+  {name:'Pan rallado',category:'Carbohidratos',tags:['gluten','trigo','fodmap_fructanos']},
+  {name:'Tortilla de trigo',category:'Carbohidratos',tags:['gluten','trigo','fodmap_fructanos']},
+  {name:'Tortilla de maíz',category:'Carbohidratos',tags:[]},
+  {name:'Crackers',category:'Preparados',tags:['gluten','trigo','procesado_variable']},
+  {name:'Croissant',category:'Preparados',tags:['gluten','trigo','leche','huevo','lactosa_posible','procesado_variable']},
+  {name:'Bizcocho',category:'Preparados',tags:['gluten','trigo','leche','huevo','lactosa_posible','procesado_variable']},
+  {name:'Cereales de desayuno',category:'Cereales',tags:['gluten_posible','trigo_posible','lactosa_posible','procesado_variable']},
+  {name:'Boniato',category:'Carbohidratos',tags:[]},
+  {name:'Puré de patata',category:'Carbohidratos',tags:['lactosa_posible','procesado_variable']},
+  {name:'Patatas fritas',category:'Carbohidratos',tags:['procesado_variable']},
+  {name:'Patatas chips',category:'Dulces y snacks',tags:['procesado_variable']},
+
+  {name:'Mantequilla',category:'Lácteos',tags:['leche','mamifero','lactosa_posible']},
+  {name:'Margarina',category:'Grasas y aceites',tags:['procesado_variable']},
+  {name:'Aceite de oliva',category:'Grasas y aceites',tags:[]},
+  {name:'Aceite de girasol',category:'Grasas y aceites',tags:[]},
+  {name:'Aceite de coco',category:'Grasas y aceites',tags:[]},
+
+  {name:'Conejo',category:'Proteínas',tags:['mamifero']},
+  {name:'Lomo de cerdo',category:'Proteínas',tags:['mamifero']},
+  {name:'Bacon / panceta',category:'Embutidos',tags:['mamifero','procesado_variable']},
+  {name:'Salchicha',category:'Embutidos',tags:['mamifero','gluten_posible','trigo_posible','lactosa_posible','procesado_variable']},
+  {name:'Hamburguesa de ternera',category:'Proteínas',tags:['mamifero','procesado_variable']},
+  {name:'Albóndigas',category:'Preparados',tags:['mamifero','gluten_posible','trigo_posible','lactosa_posible','procesado_variable']},
+  {name:'Merluza',category:'Proteínas',tags:['pescado','fpies_comun']},
+  {name:'Bacalao',category:'Proteínas',tags:['pescado','fpies_comun']},
+  {name:'Sardinas',category:'Proteínas',tags:['pescado','fpies_comun']},
+  {name:'Anchoas',category:'Proteínas',tags:['pescado','fpies_comun']},
+  {name:'Dorada',category:'Proteínas',tags:['pescado','fpies_comun']},
+  {name:'Lubina',category:'Proteínas',tags:['pescado','fpies_comun']},
+  {name:'Mejillones',category:'Proteínas',tags:[]},
+  {name:'Almejas',category:'Proteínas',tags:[]},
+  {name:'Calamar',category:'Proteínas',tags:[]},
+  {name:'Sepia',category:'Proteínas',tags:[]},
+  {name:'Pulpo',category:'Proteínas',tags:[]},
+
+  {name:'Pepino',category:'Verduras',tags:[]},
+  {name:'Puerro',category:'Verduras',tags:['fodmap_fructanos']},
+  {name:'Repollo / col',category:'Verduras',tags:[]},
+  {name:'Apio',category:'Verduras',tags:[]},
+  {name:'Calabaza',category:'Verduras',tags:[]},
+  {name:'Remolacha',category:'Verduras',tags:[]},
+  {name:'Judía verde',category:'Verduras',tags:[]},
+  {name:'Rúcula',category:'Verduras',tags:[]},
+  {name:'Canónigos',category:'Verduras',tags:[]},
+  {name:'Acelgas',category:'Verduras',tags:[]},
+  {name:'Coles de Bruselas',category:'Verduras',tags:[]},
+  {name:'Rábano',category:'Verduras',tags:[]},
+  {name:'Nabo',category:'Verduras',tags:[]},
+  {name:'Olivas / aceitunas',category:'Verduras',tags:[]},
+  {name:'Setas',category:'Verduras',tags:['fodmap_polioles']},
+
+  {name:'Piña',category:'Fruta',tags:[]},
+  {name:'Mandarina',category:'Fruta',tags:[]},
+  {name:'Limón',category:'Fruta',tags:[]},
+  {name:'Melón',category:'Fruta',tags:[]},
+  {name:'Cerezas',category:'Fruta',tags:['fodmap_polioles']},
+  {name:'Frambuesas',category:'Fruta',tags:[]},
+  {name:'Arándanos',category:'Fruta',tags:[]},
+  {name:'Nectarina',category:'Fruta',tags:['fodmap_polioles']},
+  {name:'Albaricoque',category:'Fruta',tags:['fodmap_polioles']},
+  {name:'Granada',category:'Fruta',tags:[]},
+  {name:'Higos',category:'Fruta',tags:['fodmap_fructosa']},
+  {name:'Coco',category:'Fruta',tags:[]},
+  {name:'Papaya',category:'Fruta',tags:[]},
+  {name:'Pomelo',category:'Fruta',tags:[]},
+  {name:'Dátiles',category:'Fruta',tags:['fodmap_fructosa']},
+
+  {name:'Queso crema',category:'Lácteos',tags:['lactosa','leche','mamifero']},
+  {name:'Queso fresco',category:'Lácteos',tags:['lactosa','leche','mamifero']},
+  {name:'Mozzarella',category:'Lácteos',tags:['leche','mamifero','lactosa_posible']},
+  {name:'Parmesano',category:'Lácteos',tags:['leche','mamifero','lactosa_posible']},
+  {name:'Kéfir',category:'Lácteos',tags:['lactosa','leche','mamifero']},
+  {name:'Requesón / cottage',category:'Lácteos',tags:['lactosa','leche','mamifero']},
+  {name:'Leche sin lactosa',category:'Lácteos',tags:['leche','mamifero']},
+  {name:'Yogur sin lactosa',category:'Lácteos',tags:['leche','mamifero']},
+
+  {name:'Habas',category:'Legumbres',tags:['fodmap_gos']},
+  {name:'Edamame',category:'Legumbres',tags:['soja']},
+  {name:'Anacardos',category:'Frutos secos',tags:['frutos_secos','fodmap_gos']},
+  {name:'Nueces pecanas',category:'Frutos secos',tags:['frutos_secos']},
+  {name:'Macadamias',category:'Frutos secos',tags:['frutos_secos']},
+  {name:'Semillas de chía',category:'Semillas',tags:[]},
+  {name:'Semillas de lino',category:'Semillas',tags:[]},
+  {name:'Semillas de girasol',category:'Semillas',tags:[]},
+  {name:'Semillas de calabaza',category:'Semillas',tags:[]},
+
+  {name:'Curry (especias)',category:'Condimentos',tags:['procesado_variable']},
+  {name:'Salsa curry',category:'Salsas',tags:['gluten_posible','trigo_posible','lactosa_posible','procesado_variable']},
+  {name:'Bechamel',category:'Salsas',tags:['gluten','trigo','lactosa','leche','mamifero']},
+  {name:'Salsa barbacoa',category:'Salsas',tags:['procesado_variable']},
+  {name:'Alioli',category:'Salsas',tags:['huevo','fodmap_fructanos','procesado_variable']},
+  {name:'Salsa carbonara',category:'Salsas',tags:['huevo','leche','mamifero','lactosa_posible','procesado_variable']},
+  {name:'Salsa boloñesa',category:'Salsas',tags:['mamifero','fodmap_fructanos','procesado_variable']},
+  {name:'Hummus',category:'Salsas',tags:['sesamo','fodmap_gos']},
+  {name:'Guacamole',category:'Salsas',tags:['procesado_variable']},
+  {name:'Cúrcuma',category:'Condimentos',tags:[]},
+  {name:'Comino',category:'Condimentos',tags:[]},
+  {name:'Pimentón',category:'Condimentos',tags:[]},
+  {name:'Pimienta',category:'Condimentos',tags:[]},
+  {name:'Orégano',category:'Condimentos',tags:[]},
+  {name:'Canela',category:'Condimentos',tags:[]},
+  {name:'Jengibre',category:'Condimentos',tags:[]},
+  {name:'Guindilla / picante',category:'Condimentos',tags:[]},
+
+  {name:'Croquetas',category:'Preparados',tags:['gluten','trigo','lactosa','leche','huevo','procesado_variable']},
+  {name:'Lasaña',category:'Preparados',tags:['gluten','trigo','leche','mamifero','lactosa_posible','procesado_variable']},
+  {name:'Canelones',category:'Preparados',tags:['gluten','trigo','leche','mamifero','lactosa_posible','procesado_variable']},
+  {name:'Empanada / empanadilla',category:'Preparados',tags:['gluten','trigo','procesado_variable']},
+  {name:'Nuggets',category:'Preparados',tags:['gluten_posible','trigo_posible','procesado_variable']},
+  {name:'Tortilla de patatas',category:'Preparados',tags:['huevo']},
+  {name:'Chocolate con leche',category:'Dulces y snacks',tags:['leche','lactosa','mamifero','sacarosa','procesado_variable']},
+  {name:'Chocolate negro',category:'Dulces y snacks',tags:['sacarosa','procesado_variable']},
+  {name:'Caramelos',category:'Dulces y snacks',tags:['sacarosa','procesado_variable']},
+  {name:'Chicle sin azúcar',category:'Dulces y snacks',tags:['fodmap_polioles','procesado_variable']},
+  {name:'Crema de cacao',category:'Dulces y snacks',tags:['leche','lactosa_posible','frutos_secos','sacarosa','procesado_variable']},
+
   {name:'Miel',category:'Otros',tags:['fodmap_fructosa']}
 ];
 
 const DEFAULT_SYMPTOMS = [
-  ['Dolor abdominal','Digestivo'],['Hinchazón','Digestivo'],['Gases','Digestivo'],['Diarrea','Digestivo'],['Estreñimiento','Digestivo'],['Náuseas','Digestivo'],['Vómitos','Digestivo'],['Acidez / reflujo','Digestivo'],
-  ['Dolor de cabeza','Dolor'],['Migraña','Dolor'],['Dolor muscular','Dolor'],['Dolor articular','Dolor'],['Dolor lumbar','Dolor'],
-  ['Cansancio','General'],['Mareo','General'],['Insomnio','General'],['Palidez','General'],['Letargo','General'],['Niebla mental','General'],['Desmayo / pérdida de conocimiento','General'],
-  ['Picor','Piel'],['Erupción','Piel'],['Urticaria','Piel'],['Sarpullido / enrojecimiento','Piel'],['Hormigueo / picor en la boca','Piel'],['Hinchazón de labios / lengua','Piel'],
-  ['Congestión','Respiratorio'],['Tos','Respiratorio'],['Sibilancias','Respiratorio'],['Dificultad para respirar','Respiratorio'],
-  ['Dolor menstrual','Menstrual'],['Sensibilidad mamaria','Menstrual'],
-  ['Irritabilidad','Ánimo'],['Ánimo bajo','Ánimo'],['Ansiedad','Ánimo']
+  ['Dolor abdominal','Digestivo'],['Retortijones / cólicos','Digestivo'],['Hinchazón','Digestivo'],['Distensión abdominal','Digestivo'],['Gases','Digestivo'],['Diarrea','Digestivo'],['Estreñimiento','Digestivo'],['Náuseas','Digestivo'],['Vómitos','Digestivo'],['Acidez / reflujo','Digestivo'],['Eructos','Digestivo'],['Ruidos intestinales','Digestivo'],['Saciedad precoz','Digestivo'],['Pérdida de apetito','Digestivo'],
+  ['Bristol 1 · bolitas duras','Deposiciones'],['Bristol 2 · compacta y grumosa','Deposiciones'],['Bristol 3 · formada con grietas','Deposiciones'],['Bristol 4 · lisa y blanda','Deposiciones'],['Bristol 5 · trozos blandos','Deposiciones'],['Bristol 6 · pastosa','Deposiciones'],['Bristol 7 · líquida','Deposiciones'],['Urgencia para defecar','Deposiciones'],['Evacuación incompleta','Deposiciones'],['Moco en heces','Deposiciones'],['Sangre visible en heces','Deposiciones'],['Más deposiciones de lo habitual','Deposiciones'],['Menos deposiciones de lo habitual','Deposiciones'],
+  ['Dolor de cabeza','Dolor'],['Migraña','Dolor'],['Dolor muscular','Dolor'],['Dolor articular','Dolor'],['Dolor lumbar','Dolor'],['Dolor pélvico','Dolor'],
+  ['Cansancio','General'],['Debilidad','General'],['Mareo','General'],['Insomnio','General'],['Palidez','General'],['Letargo','General'],['Niebla mental','General'],['Escalofríos','General'],['Desmayo / pérdida de conocimiento','General'],
+  ['Picor','Piel'],['Erupción','Piel'],['Urticaria','Piel'],['Sarpullido / enrojecimiento','Piel'],['Eccema','Piel'],['Hormigueo / picor en la boca','Piel'],['Hinchazón de labios / lengua','Piel'],['Hinchazón facial','Piel'],
+  ['Congestión','Respiratorio'],['Estornudos','Respiratorio'],['Picor de garganta','Respiratorio'],['Tos','Respiratorio'],['Sibilancias','Respiratorio'],['Dificultad para respirar','Respiratorio'],
+  ['Dolor menstrual','Menstrual'],['Calambres menstruales','Menstrual'],['Sensibilidad mamaria','Menstrual'],
+  ['Irritabilidad','Ánimo'],['Ánimo bajo','Ánimo'],['Ansiedad','Ánimo'],
+
+  ['Malestar digestivo','Digestivo'],['Pesadez de estómago','Digestivo'],['Sensación de plenitud','Digestivo'],['Digestión lenta','Digestivo'],['Ardor de estómago','Digestivo'],['Regurgitación','Digestivo'],['Hipo','Digestivo'],['Dolor en la boca del estómago','Digestivo'],['Hambre poco después de comer','Digestivo'],
+  ['Esfuerzo para defecar','Deposiciones'],['Dolor al defecar','Deposiciones'],['Picor anal','Deposiciones'],['Heces grasientas / aceitosas','Deposiciones'],['Heces flotantes','Deposiciones'],['Heces con olor muy intenso','Deposiciones'],['Restos de comida visibles en heces','Deposiciones'],
+  ['Dolor cervical','Dolor'],['Dolor dorsal / espalda','Dolor'],['Dolor de piernas','Dolor'],['Calambres musculares','Dolor'],['Presión / dolor facial','Dolor'],
+  ['Somnolencia','General'],['Somnolencia después de comer','General'],['Falta de energía','General'],['Malestar general','General'],['Fiebre','General'],['Sensación febril','General'],['Sudoración','General'],['Sudor frío','General'],['Sed intensa','General'],['Temblor','General'],['Sensación de calor','General'],['Sensación de frío','General'],['Dificultad para concentrarse','General'],
+  ['Palpitaciones','Cardiovascular'],['Taquicardia / pulso acelerado','Cardiovascular'],
+  ['Dificultad para conciliar el sueño','Sueño'],['Despertares nocturnos','Sueño'],['Sueño no reparador','Sueño'],['Dormir más de lo habitual','Sueño'],['Despertar demasiado temprano','Sueño'],
+  ['Acné / brote de granitos','Piel'],['Piel seca','Piel'],['Enrojecimiento facial','Piel'],['Hinchazón de manos / pies','Piel'],['Picor del cuero cabelludo','Piel'],
+  ['Moqueo / secreción nasal','Respiratorio'],['Goteo nasal posterior','Respiratorio'],['Ronquera','Respiratorio'],['Opresión en la garganta','Respiratorio'],
+  ['Ojos llorosos','Ojos'],['Picor de ojos','Ojos'],['Ojos rojos','Ojos'],['Ojos secos','Ojos'],
+  ['Boca seca','Boca y garganta'],['Aftas','Boca y garganta'],['Sabor metálico','Boca y garganta'],['Mal sabor de boca','Boca y garganta'],['Dolor de garganta','Boca y garganta'],
+  ['Manchado fuera de la regla','Menstrual'],['Dolor de ovulación','Menstrual'],['Hinchazón premenstrual','Menstrual'],['Cambios de humor premenstruales','Menstrual'],['Antojos premenstruales','Menstrual'],['Acné menstrual','Menstrual'],
+  ['Estrés','Ánimo'],['Nerviosismo','Ánimo'],['Cambios de humor','Ánimo'],['Apatía','Ánimo']
 ];
 
 const CLINICAL_PATTERNS = [
@@ -413,7 +550,11 @@ function entrySubtitle(e){
     const foods=(e.foods||[]).map(id=>catalogById(id)?.name).filter(Boolean).join(' · ');
     return [e.name?.trim()?cap(e.mealType||'comida'):'',foods,e.amount?`Cantidad ${e.amount}`:'',e.note||''].filter(Boolean).join(' · ');
   }
-  if(e.type==='symptom') return [`Intensidad ${e.intensity}/10`,e.duration?`Duración ${e.duration}`:'',e.ongoing?'Continúa desde ayer':'',e.note||''].filter(Boolean).join(' · ');
+  if(e.type==='symptom'){
+    const name=catalogById(e.symptomId)?.name||'';
+    const isBristol=/^Bristol [1-7]\b/.test(name);
+    return [!isBristol && e.intensity!=null?`Intensidad ${e.intensity}/10`:'',!isBristol && e.duration?`Duración ${e.duration}`:'',!isBristol && e.ongoing?'Continúa desde ayer':'',e.note||''].filter(Boolean).join(' · ');
+  }
   if(e.type==='period') return [`Flujo ${e.flow}`,`Dolor ${e.pain}/10`,e.note||''].filter(Boolean).join(' · ');
   if(e.type==='med') return [e.dose||'',e.note||''].filter(Boolean).join(' · ');
   return '';
@@ -496,18 +637,31 @@ function renderMealForm(date,entry=null){
   </form>`);
 }
 
+function isBristolSymptomId(id){ return /^Bristol [1-7]\b/.test(catalogById(id)?.name||''); }
+function updateSymptomFormFields(){
+  const sel=document.getElementById('symptom-select'); if(!sel)return;
+  const bristol=isBristolSymptomId(sel.value);
+  document.getElementById('symptom-duration-field')?.classList.toggle('hidden',bristol);
+  document.getElementById('symptom-intensity-field')?.classList.toggle('hidden',bristol);
+  document.getElementById('symptom-ongoing-field')?.classList.toggle('hidden',bristol);
+  document.getElementById('symptom-form-hint')?.classList.toggle('hidden',!bristol);
+}
 function renderSymptomForm(date,entry=null){
   const symptoms=activeCatalog('symptom'); const favorites=symptoms.filter(x=>x.favorite); const groups=groupedCatalog('symptom');
+  const bristolSymptoms=symptoms.filter(x=>/^Bristol [1-7]\b/.test(x.name));
   const selected=entry?.symptomId || favorites[0]?.id || symptoms[0]?.id || '';
+  const selectedIsBristol=isBristolSymptomId(selected);
   const intensity=entry?.intensity ?? 5; const duration=entry?.duration||'1 h';
   openSheet(`${sheetHead(entry?'Editar síntoma':'Añadir síntoma',formatDate(date))}<form id="symptom-form" class="form-grid" data-entry-id="${entry?.id||''}" data-date="${date}">
     ${favorites.length?`<div><div class="category-title">Favoritos</div><div class="segmented">${favorites.map(i=>`<button type="button" class="chip favorite ${selected===i.id?'active':''}" data-symptom-chip="${i.id}">${esc(i.name)}</button>`).join('')}</div></div>`:''}
+    ${bristolSymptoms.length?`<div><div class="category-title">Deposición · Escala Bristol</div><div class="segmented bristol-quick">${bristolSymptoms.map(i=>`<button type="button" class="chip ${selected===i.id?'active':''}" data-symptom-chip="${i.id}" title="${esc(i.name)}">Tipo ${esc(i.name.match(/^Bristol ([1-7])/)?.[1]||'')}</button>`).join('')}</div><p class="muted small">1–2 más duras · 3–5 formadas/blandas · 6–7 más sueltas.</p></div>`:''}
     <label class="field-label">Síntoma<select id="symptom-select" class="field-input">${Object.entries(groups).map(([cat,items])=>`<optgroup label="${esc(cat)}">${items.map(i=>`<option value="${i.id}" ${selected===i.id?'selected':''}>${esc(i.name)}</option>`).join('')}</optgroup>`).join('')}</select></label>
+    <p id="symptom-form-hint" class="muted small ${selectedIsBristol?'':'hidden'}">Para Bristol basta con indicar el tipo y la hora; no necesita intensidad ni duración.</p>
     <button type="button" class="inline-link" id="toggle-new-symptom">+ Crear síntoma nuevo</button>
-    <div id="new-symptom-panel" class="card compact-card hidden"><div class="two-col"><label class="field-label">Nombre<input id="new-symptom-name" class="field-input"></label><label class="field-label">Categoría<select id="new-symptom-category" class="field-input">${['Digestivo','Dolor','General','Piel','Respiratorio','Menstrual','Ánimo'].map(x=>`<option>${x}</option>`).join('')}</select></label></div><button type="button" id="save-new-symptom" class="primary-btn" style="margin-top:10px">Guardar síntoma</button></div>
-    <div class="two-col"><label class="field-label">Hora<input id="symptom-time" class="field-input" type="time" value="${entry?.time|| (date===todayStr()?nowTime():'12:00')}"></label><label class="field-label">Duración<select id="symptom-duration" class="field-input">${['15 min','30 min','1 h','2 h','4 h','Todo el día','En curso'].map(x=>`<option ${duration===x?'selected':''}>${x}</option>`).join('')}</select></label></div>
-    <label class="field-label">Intensidad <span class="muted small">1 muy leve · 5 moderado · 10 muy intenso</span><div class="scale-row">${[1,2,3,4,5,6,7,8,9,10].map(n=>`<button type="button" class="scale-btn ${intensity===n?'active':''}" data-intensity="${n}">${n}</button>`).join('')}</div><input id="symptom-intensity" type="hidden" value="${intensity}"></label>
-    <label class="field-label"><span><input id="symptom-ongoing" type="checkbox" ${entry?.ongoing?'checked':''}> Continúa desde ayer</span></label>
+    <div id="new-symptom-panel" class="card compact-card hidden"><div class="two-col"><label class="field-label">Nombre<input id="new-symptom-name" class="field-input"></label><label class="field-label">Categoría<select id="new-symptom-category" class="field-input">${['Digestivo','Deposiciones','Dolor','General','Cardiovascular','Sueño','Piel','Respiratorio','Ojos','Boca y garganta','Menstrual','Ánimo'].map(x=>`<option>${x}</option>`).join('')}</select></label></div><button type="button" id="save-new-symptom" class="primary-btn" style="margin-top:10px">Guardar síntoma</button></div>
+    <div class="two-col"><label class="field-label">Hora<input id="symptom-time" class="field-input" type="time" value="${entry?.time|| (date===todayStr()?nowTime():'12:00')}"></label><label id="symptom-duration-field" class="field-label ${selectedIsBristol?'hidden':''}">Duración<select id="symptom-duration" class="field-input">${['15 min','30 min','1 h','2 h','4 h','Todo el día','En curso'].map(x=>`<option ${duration===x?'selected':''}>${x}</option>`).join('')}</select></label></div>
+    <label id="symptom-intensity-field" class="field-label ${selectedIsBristol?'hidden':''}">Intensidad <span class="muted small">1 muy leve · 5 moderado · 10 muy intenso</span><div class="scale-row">${[1,2,3,4,5,6,7,8,9,10].map(n=>`<button type="button" class="scale-btn ${intensity===n?'active':''}" data-intensity="${n}">${n}</button>`).join('')}</div><input id="symptom-intensity" type="hidden" value="${intensity}"></label>
+    <label id="symptom-ongoing-field" class="field-label ${selectedIsBristol?'hidden':''}"><span><input id="symptom-ongoing" type="checkbox" ${entry?.ongoing?'checked':''}> Continúa desde ayer</span></label>
     <label class="field-label">Notas opcionales<textarea id="symptom-note" class="field-textarea">${esc(entry?.note||'')}</textarea></label>
     <button class="primary-btn" type="submit">Guardar síntoma</button>
   </form>`);
@@ -565,12 +719,25 @@ function triggerInfoForMeal(meal,pattern){
   return {weight,triggerFoods,uncertainFoods};
 }
 function patternSymptomMap(pattern){ return new Map(pattern.symptoms.map(([name,weight])=>[name,weight])); }
+function symptomClinicalAliases(name){
+  const aliases=[name];
+  if(/^Bristol [67]\b/.test(name)) aliases.push('Diarrea');
+  if(/^Bristol [12]\b/.test(name)) aliases.push('Estreñimiento');
+  if(name==='Retortijones / cólicos') aliases.push('Dolor abdominal');
+  if(name==='Distensión abdominal') aliases.push('Hinchazón');
+  return aliases;
+}
 function symptomsForMealWindow(meal,pattern,symptoms){
   const start=entryDateTime(meal), smap=patternSymptomMap(pattern);
-  return symptoms.filter(s=>{
-    const name=symptomNameById(s.symptomId); if(!smap.has(name))return false;
-    const lag=hoursBetween(start,entryDateTime(s)); return lag>=pattern.minHours && lag<=pattern.maxHours;
-  }).map(s=>({...s,lag:hoursBetween(start,entryDateTime(s)),patternWeight:smap.get(symptomNameById(s.symptomId))||1}));
+  return symptoms.map(s=>{
+    const name=symptomNameById(s.symptomId);
+    const aliases=symptomClinicalAliases(name);
+    const weights=aliases.map(alias=>smap.get(alias)).filter(Boolean);
+    if(!weights.length)return null;
+    const lag=hoursBetween(start,entryDateTime(s));
+    if(lag<pattern.minHours || lag>pattern.maxHours)return null;
+    return {...s,lag,patternWeight:Math.max(...weights)};
+  }).filter(Boolean);
 }
 function computeClinicalPatterns(entries){
   const meals=entries.filter(e=>e.type==='meal').sort((a,b)=>entryDateTime(a)-entryDateTime(b));
@@ -617,7 +784,7 @@ function renderClinicalPatterns(entries){
 function showClinicalPatternDetail(p){
   const triggerLabels=[...new Set([...p.triggerTags,...(p.possibleTriggerTags||[])])].map(k=>FOOD_TAG_LABELS[k]||k);
   const symptomLabels=p.symptoms.map(([n,w])=>`${n}${w>=2?' ★':''}`);
-  const matchRows=p.matches.length?p.matches.flatMap(m=>m.symptoms.map(sym=>`<div class="clinical-match"><div><strong>${esc(m.meal.name?.trim()||cap(m.meal.mealType||'comida'))}</strong><div class="meta">${esc(formatDate(m.meal.date,{day:'numeric',month:'short'}))} ${formatTime(m.meal.time)} · ${esc([...m.triggerFoods,...m.uncertainFoods].join(', '))}</div></div><div class="clinical-match-right"><strong>+${sym.lag<1?Math.round(sym.lag*60)+' min':sym.lag.toFixed(sym.lag<10?1:0)+' h'}</strong><span>${esc(symptomNameById(sym.symptomId))} · ${sym.intensity}/10</span></div></div>`)).join(''):'<div class="empty-state">Todavía no hay coincidencias dentro de esta ventana.</div>';
+  const matchRows=p.matches.length?p.matches.flatMap(m=>m.symptoms.map(sym=>`<div class="clinical-match"><div><strong>${esc(m.meal.name?.trim()||cap(m.meal.mealType||'comida'))}</strong><div class="meta">${esc(formatDate(m.meal.date,{day:'numeric',month:'short'}))} ${formatTime(m.meal.time)} · ${esc([...m.triggerFoods,...m.uncertainFoods].join(', '))}</div></div><div class="clinical-match-right"><strong>+${sym.lag<1?Math.round(sym.lag*60)+' min':sym.lag.toFixed(sym.lag<10?1:0)+' h'}</strong><span>${esc(symptomNameById(sym.symptomId))}${sym.intensity!=null?` · ${sym.intensity}/10`:''}</span></div></div>`)).join(''):'<div class="empty-state">Todavía no hay coincidencias dentro de esta ventana.</div>';
   const sources=p.sources.map(([label,url])=>`<a class="source-link" href="${esc(url)}" target="_blank" rel="noopener noreferrer">${esc(label)} ↗</a>`).join('');
   const allergyNote=p.allergy?`<div class="clinical-warning"><strong>Importante</strong><span>Dificultad para respirar, hinchazón de lengua/garganta o pérdida de conocimiento pueden ser signos de una reacción alérgica grave y requieren atención urgente.</span></div>`:'';
   const warning=p.warning?`<div class="clinical-warning"><strong>A tener en cuenta</strong><span>${esc(p.warning)}</span></div>`:'';
@@ -777,7 +944,7 @@ function bindEvents(){
     const fav=e.target.closest('[data-fav-meal]'); if(fav){const f=(state.meta.favoriteMeals||[]).find(x=>x.id===fav.dataset.favMeal);if(f){syncMealDraftFromForm();state.mealDraft.foods=[...f.foods];state.mealDraft.mealType=f.mealType||state.mealDraft.mealType;state.mealDraft.time=mealTimeForType(state.mealDraft.mealType);state.mealDraft.amount=f.amount||'normal';state.mealDraft.name=f.mealName||state.mealDraft.name||'';renderMealForm(state.mealDraft.date);}return;}
     if(e.target.id==='toggle-new-food'){document.getElementById('new-food-panel').classList.toggle('hidden');return;}
     if(e.target.id==='save-new-food'){syncMealDraftFromForm();const panel=document.getElementById('new-food-panel');const tags=selectedFoodTags(panel);const item=await addCatalogItem('food',document.getElementById('new-food-name').value,document.getElementById('new-food-category').value,tags);if(item){if(!state.mealDraft.foods.includes(item.id))state.mealDraft.foods.push(item.id);renderMealForm(state.mealDraft.date);showToast('Alimento añadido.');}return;}
-    const symChip=e.target.closest('[data-symptom-chip]'); if(symChip){document.getElementById('symptom-select').value=symChip.dataset.symptomChip;document.querySelectorAll('[data-symptom-chip]').forEach(x=>x.classList.toggle('active',x===symChip));return;}
+    const symChip=e.target.closest('[data-symptom-chip]'); if(symChip){document.getElementById('symptom-select').value=symChip.dataset.symptomChip;document.querySelectorAll('[data-symptom-chip]').forEach(x=>x.classList.toggle('active',x.dataset.symptomChip===symChip.dataset.symptomChip));updateSymptomFormFields();return;}
     const intens=e.target.closest('[data-intensity]'); if(intens){document.getElementById('symptom-intensity').value=intens.dataset.intensity;document.querySelectorAll('[data-intensity]').forEach(x=>x.classList.toggle('active',x===intens));return;}
     if(e.target.id==='toggle-new-symptom'){document.getElementById('new-symptom-panel').classList.toggle('hidden');return;}
     if(e.target.id==='save-new-symptom'){const item=await addCatalogItem('symptom',document.getElementById('new-symptom-name').value,document.getElementById('new-symptom-category').value);if(item){renderSymptomForm(document.getElementById('symptom-form').dataset.date);showToast('Síntoma añadido.');}return;}
@@ -799,6 +966,10 @@ function bindEvents(){
     if(['meal-name','meal-time','meal-note'].includes(e.target.id)) syncMealDraftFromForm();
   });
   document.getElementById('sheet').addEventListener('change',e=>{
+    if(e.target.id==='symptom-select'){
+      document.querySelectorAll('[data-symptom-chip]').forEach(x=>x.classList.toggle('active',x.dataset.symptomChip===e.target.value));
+      updateSymptomFormFields();
+    }
     if(e.target.id==='meal-type' && state.mealDraft){
       state.mealDraft.mealType=e.target.value; state.mealDraft.time=mealTimeForType(e.target.value);
       const time=document.getElementById('meal-time'); if(time)time.value=state.mealDraft.time;
@@ -821,7 +992,8 @@ function bindEvents(){
     }
     if(e.target.id==='symptom-form'){
       const id=document.getElementById('symptom-select').value; if(!id){showToast('Selecciona un síntoma.');return;}
-      const entry={id:e.target.dataset.entryId||uid('entry'),type:'symptom',date:e.target.dataset.date,time:document.getElementById('symptom-time').value,symptomId:id,intensity:Number(document.getElementById('symptom-intensity').value),duration:document.getElementById('symptom-duration').value,ongoing:document.getElementById('symptom-ongoing').checked,note:document.getElementById('symptom-note').value.trim()};
+      const bristol=isBristolSymptomId(id);
+      const entry={id:e.target.dataset.entryId||uid('entry'),type:'symptom',date:e.target.dataset.date,time:document.getElementById('symptom-time').value,symptomId:id,intensity:bristol?null:Number(document.getElementById('symptom-intensity').value),duration:bristol?'':document.getElementById('symptom-duration').value,ongoing:bristol?false:document.getElementById('symptom-ongoing').checked,note:document.getElementById('symptom-note').value.trim()};
       await saveEntry(entry); closeSheet(); showToast('Síntoma guardado.'); return;
     }
     if(e.target.id==='period-form'){
